@@ -6,7 +6,7 @@ h2{
     font-family: 'Caveat Brush', cursive;
 }
 p{
-    font-family: 'Boogaloo', cursive;
+    font-family: 'Caveat Brush', cursive;
 }
 .row q{
     font-size: 20px;
@@ -70,6 +70,6 @@ footer{
         z-index: 1020;
         position: -webkit-sticky;
         position: sticky;
-        top: 50px;
+        top: 55px;
     }
 }
