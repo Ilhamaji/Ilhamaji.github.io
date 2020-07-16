@@ -46,6 +46,45 @@ footer{
 .warning{
     margin-left: 0;
 }
+.mt-6{
+    margin-top: 7px !important;
+}
+li .fa{
+    margin-right: 10px;
+}
+ul li div{
+    margin-top: -10px !important;
+}
+ul li div a{
+    display: none;
+}
+ul li:hover div{
+    display: block;
+}
+.imgc{
+    border: 5px solid #F8F9FA;
+    border-radius: 200px;
+}
+.but{
+    box-shadow: 1px 0px 1px;
+    background-color: #F8F9FA;
+    color: black;
+    text-decoration: none;
+    border: 1px solid #F8F9FA;
+    border-radius: 30px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    padding-left: 35px;
+    padding-right: 35px;
+}
+.but:hover{
+    box-shadow: 0px 0px 0px;
+    border: black;
+    transition: 0.3s;
+    color: black;
+    text-decoration: none;
+    background-color: #eee;
+}
 
 @media screen and (max-width:680px){
     .borbot{
