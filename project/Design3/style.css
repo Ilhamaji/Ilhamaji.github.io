@@ -1,0 +1,307 @@
+/* Global 
+====================*/
+* {
+  padding: 0;
+  margin: 0;
+}
+body {
+  margin-top: 70px;
+  background-color: #0c0c0c !important;
+}
+a {
+  text-decoration: none;
+  color: #333;
+}
+header,
+nav,
+section {
+  margin: 0 auto 0px auto;
+}
+nav {
+  width: 95%;
+}
+
+/* header 
+====================*/
+nav ul {
+  display: block;
+}
+nav ul li {
+  display: none;
+}
+nav ul:hover li {
+  display: block;
+}
+header {
+  z-index: 2;
+  position: relative;
+  padding: 10px 0;
+}
+header h1 {
+  font-family: 'Josefin Sans', sans-serif;
+}
+.slide {
+  z-index: 1;
+  position: relative;
+}
+.logo {
+  width: 100px;
+}
+.header {
+  position: relative;
+  z-index: 2;
+}
+#carouselExampleIndicators {
+  position: relative;
+  margin-top: auto;
+}
+header {
+  color: white;
+  display: inline-flex;
+}
+header h1 {
+  margin-top: 10px;
+}
+.carousel-inner img {
+  width: 100%;
+}
+.textjumbo {
+  color: white;
+  width: 100%;
+  height: 400px;
+}
+.slide-awal {
+  padding-top: 150px;
+  margin-left: 200px;
+  font-size: 50px;
+}
+.slide-awal-dua {
+  margin-top: -20px;
+  margin-left: 205px;
+  font-size: 20px;
+}
+.slide-kedua {
+  padding-top: 150px;
+  margin-left: 200px;
+  font-size: 50px;
+}
+.slide-kedua-dua {
+  margin-top: -20px;
+  margin-left: 205px;
+  font-size: 20px;
+}
+.slide-ketiga {
+  padding-top: 150px;
+  margin-left: 200px;
+  font-size: 50px;
+}
+.slide-ketiga-dua {
+  margin-top: -20px;
+  margin-left: 205px;
+  font-size: 20px;
+}
+
+/* Menu 
+====================*/
+#twd-menu {
+  margin-bottom: 20px;
+}
+.normal {
+  height: 70px;
+  background: black;
+}
+#twd-menu ul {
+  list-style-type: none;
+}
+#twd-menu ul {
+  display: inline;
+}
+#twd-menu ul a {
+  font-size: 20px;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+  border-radius: 10px;
+  color: white;
+}
+section {
+  margin-top: 60px;
+  background-color: white;
+  height: 1000px;
+}
+section h1 {
+  padding-top: 20px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+.underline {
+  text-decoration: none;
+  position: relative;
+}
+.image {
+  opacity: 1;
+  display: block;
+  transition: 0.5s ease;
+  backface-visibility: hidden;
+  border: 1px 1px 1px 1px solid;
+  border-radius: 10px 10px 10px;
+}
+.middle {
+  z-index: 2;
+  transition: 0.5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+}
+.text {
+  z-index: 3;
+  position: relative;
+}
+.box:hover .image {
+  opacity: 0.3;
+}
+.box:hover .middle {
+  opacity: 1;
+}
+.box {
+  z-index: 1;
+  font-family: 'Fredoka One', cursive;
+  width: 100%;
+  transition: all 0.5s esase;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: transparent;
+  text-transform: uppercase;
+}
+.box::before {
+  position: absolute;
+  content: '';
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  border-bottom: 4px solid transparent;
+  border-left: 4px solid transparent;
+  border-radius: 10px;
+  box-sizing: border-box;
+  transform: translateX(100%);
+}
+.box::after {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  border-top: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-radius: 10px;
+  box-sizing: border-box;
+  transform: translateX(-100%);
+}
+
+.box:hover::before {
+  border-color: #262626;
+  height: 100%;
+  transform: translateX(0);
+  transition: 0.3s transform linear, 0.3s height linear 0.3s;
+}
+.box:hover::after {
+  border-color: #262626;
+  height: 100%;
+  transform: translateX(0);
+  transition: 0.3s transform linear, 0.3s height linear 0.3s;
+}
+.box:hover .text-card {
+  color: grey;
+  transition: 0.5s;
+}
+.text-card {
+  margin-top: 10px;
+}
+.underline:after {
+  position: absolute;
+  content: '';
+  height: 2px;
+  /* adjust this to move up and down. you may have to adjust the line height of the paragraph if you move it down a lot. */
+  bottom: -4px;
+
+  /****** 
+  optional values below 
+  ******/
+
+  /* center - (optional) use with adjusting width   */
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  width: 100px;
+  background: black;
+
+  /* optional animation */
+  -o-transition: 0.5s;
+  -ms-transition: 0.5s;
+  -moz-transition: 0.5s;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+/* optional hover classes used with anmiation */
+.underline:hover:after {
+  width: 200px;
+  background: grey;
+}
+
+/* Menu When Scroll */
+.fixed {
+  position: fixed;
+  top: -5px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background: black;
+  color: gold;
+  -webkit-transition: top 400ms ease 0s;
+  -moz-transition: top 400ms ease 0s;
+  -o-transition: top 400ms ease 0s;
+  -ms-transition: top 400ms ease 0s;
+  transition: top 400ms ease 0s;
+  box-shadow: 0 0 40px #222;
+  -webkit-box-shadow: 0 0 40px #222;
+  -moz-box-shadow: 0 0 40px #222;
+}
+.fixed ul {
+  width: 450px;
+  margin: 0 auto;
+}
+
+/* Content
+=================*/
+aside {
+  padding: 50px 10px;
+}
+aside h2 {
+  margin: 20px 0;
+}
+@media only screen and (max-width: 600px) {
+  .container .row {
+    display: block;
+  }
+  .box {
+    margin-top: 20px;
+    width: 60%;
+  }
+  nav,
+  ul,
+  li {
+    text-align: center !important;
+  }
+  nav ul {
+    padding-left: 0px;
+    padding-right: 10px;
+  }
+}
