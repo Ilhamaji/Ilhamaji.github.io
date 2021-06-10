@@ -114,6 +114,12 @@ section {
   -webkit-box-shadow: 0 0 40px #222;
   -moz-box-shadow: 0 0 40px #222;
 }
+.fixed,
+.fixed ul,
+.fixed ul li,
+.fixed ul li a {
+  text-align: center;
+}
 
 /* Content
 =================*/
