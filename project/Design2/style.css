@@ -123,6 +123,9 @@ section {
 .fixed ul li a {
   text-align: center;
 }
+.fixed ul li {
+  padding: 10px;
+}
 
 /* Content
 =================*/
@@ -306,5 +309,10 @@ section h1 {
   }
   #twd-menu ul li a {
     padding: 0px;
+  }
+  #twd-menu ul li {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 }
