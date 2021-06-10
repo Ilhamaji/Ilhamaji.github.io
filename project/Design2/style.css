@@ -57,6 +57,10 @@ header h1 {
 .normal ul li a:hover {
   color: red !important;
 }
+.imgres2 {
+  display: none;
+  visibility: hidden;
+}
 
 /* Menu 
 ====================*/
@@ -278,10 +282,11 @@ section h1 {
     padding-right: 10px;
   }
   .imgres2 {
+    display: flex;
     visibility: visible;
   }
   .imgres {
-    margin-top: auto;
+    display: none;
     visibility: hidden;
   }
 }
