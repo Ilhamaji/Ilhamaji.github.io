@@ -72,15 +72,18 @@ header h1 {
   background: black;
 }
 #twd-menu ul {
+  text-align: left;
   cursor: default;
   list-style-type: none;
   padding-top: 10px;
 }
 #twd-menu ul li {
+  text-align: left;
   cursor: default;
   display: inline-block;
 }
 #twd-menu ul li a {
+  text-align: left;
   font-size: 20px;
   font-family: 'Yanone Kaffeesatz', sans-serif;
   text-decoration: none;
