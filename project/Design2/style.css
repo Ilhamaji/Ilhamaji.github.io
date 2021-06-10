@@ -82,8 +82,6 @@ header h1 {
 }
 #twd-menu ul li a {
   font-size: 20px;
-  font-family: 'Dosis', sans-serif;
-  font-family: 'Josefin Sans', sans-serif;
   font-family: 'Yanone Kaffeesatz', sans-serif;
   text-decoration: none;
   display: inline-block;
@@ -104,9 +102,9 @@ section {
   top: -5px;
   left: 0;
   width: 100%;
-  padding: 10px;
+  padding-top: 10px;
   background: black;
-  color: gold;
+  color: white;
   -webkit-transition: top 400ms ease 0s;
   -moz-transition: top 400ms ease 0s;
   -o-transition: top 400ms ease 0s;
@@ -115,10 +113,6 @@ section {
   box-shadow: 0 0 40px #222;
   -webkit-box-shadow: 0 0 40px #222;
   -moz-box-shadow: 0 0 40px #222;
-}
-.fixed ul {
-  width: 450px;
-  margin: 0 auto;
 }
 
 /* Content
@@ -135,11 +129,12 @@ section {
   height: 1000px;
 }
 section h1 {
+  padding-top: 15px;
   cursor: default;
-  padding-top: 20px;
   font-family: 'Josefin Sans', sans-serif;
 }
 .underline {
+  color: black;
   text-decoration: none;
   position: relative;
 }
@@ -250,7 +245,7 @@ section h1 {
 /* optional hover classes used with anmiation */
 .underline:hover:after {
   width: 200px;
-  background: grey;
+  background: black;
 }
 
 .middle a {
@@ -288,5 +283,19 @@ section h1 {
   .imgres {
     display: none;
     visibility: hidden;
+  }
+  .box {
+    z-index: 1;
+    font-family: 'Fredoka One', cursive;
+    width: 80%;
+    transition: all 0.5s esase;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: transparent;
+    text-transform: uppercase;
+  }
+  #twd-menu ul li a {
+    padding: 0px;
   }
 }
