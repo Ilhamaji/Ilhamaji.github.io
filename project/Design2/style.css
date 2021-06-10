@@ -6,7 +6,7 @@
 }
 body {
   margin-top: 70px;
-  background-color: #0c0c0c !important;
+  background-color: black !important;
 }
 a {
   text-decoration: none;
@@ -23,15 +23,6 @@ nav {
 
 /* header 
 ====================*/
-nav ul {
-  display: block;
-}
-nav ul li {
-  display: none;
-}
-nav ul:hover li {
-  display: block;
-}
 header {
   z-index: 2;
   position: relative;
@@ -39,10 +30,6 @@ header {
 }
 header h1 {
   font-family: 'Josefin Sans', sans-serif;
-}
-.slide {
-  z-index: 1;
-  position: relative;
 }
 .logo {
   width: 100px;
@@ -53,52 +40,22 @@ header h1 {
 }
 #carouselExampleIndicators {
   position: relative;
-  margin-top: auto;
+  margin-top: -210px;
+  z-index: 1;
 }
 header {
   color: white;
   display: inline-flex;
 }
 header h1 {
+  cursor: default;
   margin-top: 10px;
 }
 .carousel-inner img {
   width: 100%;
 }
-.textjumbo {
-  color: white;
-  width: 100%;
-  height: 400px;
-}
-.slide-awal {
-  padding-top: 150px;
-  margin-left: 200px;
-  font-size: 50px;
-}
-.slide-awal-dua {
-  margin-top: -20px;
-  margin-left: 205px;
-  font-size: 20px;
-}
-.slide-kedua {
-  padding-top: 150px;
-  margin-left: 200px;
-  font-size: 50px;
-}
-.slide-kedua-dua {
-  margin-top: -20px;
-  margin-left: 205px;
-  font-size: 20px;
-}
-.slide-ketiga {
-  padding-top: 150px;
-  margin-left: 200px;
-  font-size: 50px;
-}
-.slide-ketiga-dua {
-  margin-top: -20px;
-  margin-left: 205px;
-  font-size: 20px;
+.normal ul li a:hover {
+  color: red !important;
 }
 
 /* Menu 
@@ -111,26 +68,70 @@ header h1 {
   background: black;
 }
 #twd-menu ul {
+  cursor: default;
   list-style-type: none;
+  padding-top: 10px;
 }
-#twd-menu ul {
-  display: inline;
+#twd-menu ul li {
+  cursor: default;
+  display: inline-block;
 }
-#twd-menu ul a {
+#twd-menu ul li a {
   font-size: 20px;
+  font-family: 'Dosis', sans-serif;
+  font-family: 'Josefin Sans', sans-serif;
   font-family: 'Yanone Kaffeesatz', sans-serif;
   text-decoration: none;
   display: inline-block;
-  margin-top: 20px;
+  padding: 10px;
   border-radius: 10px;
   color: white;
 }
+#twd-menu ul li a:hover {
+  color: red;
+}
 section {
-  margin-top: 60px;
+  height: 1000px;
+}
+
+/* Menu When Scroll */
+.fixed {
+  position: fixed;
+  top: -5px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background: black;
+  color: gold;
+  -webkit-transition: top 400ms ease 0s;
+  -moz-transition: top 400ms ease 0s;
+  -o-transition: top 400ms ease 0s;
+  -ms-transition: top 400ms ease 0s;
+  transition: top 400ms ease 0s;
+  box-shadow: 0 0 40px #222;
+  -webkit-box-shadow: 0 0 40px #222;
+  -moz-box-shadow: 0 0 40px #222;
+}
+.fixed ul {
+  width: 450px;
+  margin: 0 auto;
+}
+
+/* Content
+=================*/
+aside {
+  padding: 50px 10px;
+}
+aside h2 {
+  margin: 20px 0;
+}
+
+section {
   background-color: white;
   height: 1000px;
 }
 section h1 {
+  cursor: default;
   padding-top: 20px;
   font-family: 'Josefin Sans', sans-serif;
 }
@@ -157,6 +158,7 @@ section h1 {
   -ms-transform: translate(-50%, -50%);
   text-align: center;
 }
+
 .text {
   z-index: 3;
   position: relative;
@@ -228,21 +230,12 @@ section h1 {
   position: absolute;
   content: '';
   height: 2px;
-  /* adjust this to move up and down. you may have to adjust the line height of the paragraph if you move it down a lot. */
   bottom: -4px;
-
-  /****** 
-  optional values below 
-  ******/
-
-  /* center - (optional) use with adjusting width   */
   margin: 0 auto;
   left: 0;
   right: 0;
   width: 100px;
   background: black;
-
-  /* optional animation */
   -o-transition: 0.5s;
   -ms-transition: 0.5s;
   -moz-transition: 0.5s;
@@ -256,36 +249,14 @@ section h1 {
   background: grey;
 }
 
-/* Menu When Scroll */
-.fixed {
-  position: fixed;
-  top: -5px;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  background: black;
-  color: gold;
-  -webkit-transition: top 400ms ease 0s;
-  -moz-transition: top 400ms ease 0s;
-  -o-transition: top 400ms ease 0s;
-  -ms-transition: top 400ms ease 0s;
-  transition: top 400ms ease 0s;
-  box-shadow: 0 0 40px #222;
-  -webkit-box-shadow: 0 0 40px #222;
-  -moz-box-shadow: 0 0 40px #222;
+.middle a {
+  text-decoration: none;
 }
-.fixed ul {
-  width: 450px;
-  margin: 0 auto;
+.middle a:hover {
+  color: black;
 }
-
-/* Content
-=================*/
-aside {
-  padding: 50px 10px;
-}
-aside h2 {
-  margin: 20px 0;
+.middle a i {
+  padding-right: 5px;
 }
 
 @media only screen and (max-width: 768px) {
@@ -305,5 +276,12 @@ aside h2 {
   nav ul {
     padding-left: 0px;
     padding-right: 10px;
+  }
+  .imgres2 {
+    visibility: visible;
+  }
+  .imgres {
+    margin-top: auto;
+    visibility: hidden;
   }
 }
