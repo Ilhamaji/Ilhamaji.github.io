@@ -350,4 +350,7 @@ section h1 {
   footer {
     font-size: 10px;
   }
+  .textfoot {
+    padding-top: 10px;
+  }
 }
