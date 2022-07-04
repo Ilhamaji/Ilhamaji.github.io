@@ -17,8 +17,10 @@
     <title>Document</title>
   </head>
   <body class="bg-zinc-900">
-    <nav class="p-5 w-full bg-transparent text-white">
-      <div class="navbar flex justify-between">
+    <nav
+      class="p-5 md:px-14 w-full md:flex md:justify-between bg-transparent text-white"
+    >
+      <div class="navbar md:inline flex justify-between">
         <div class="brand inline">
           <img class="h-10 inline my-auto cursor-pointer" src="tailwind.png" />
 
@@ -27,7 +29,7 @@
           >
         </div>
 
-        <button class="text-xl">
+        <button class="text-xl md:hidden md:opacity-0 md:invisible">
           <ion-icon
             onclick="Menu(this)"
             size="large"
@@ -36,51 +38,57 @@
         </button>
       </div>
 
-      <ul class="opacity-0 hidden bg-zinc-800 p-5 rounded-md">
-        <li class="my-2">
+      <ul
+        class="opacity-0 hidden bg-zinc-800 p-5 rounded-md md:opacity-100 md:inline md:visible md:bg-transparent md:p-0"
+      >
+        <li class="my-2 md:p-2 md:inline">
           <a class="hover:text-cyan-300 text-xl duration-150" href="#">home</a>
         </li>
-        <li class="my-2">
+        <li class="my-2 md:p-2 md:inline">
           <a class="hover:text-cyan-300 text-xl duration-150" href="#">menu</a>
         </li>
-        <li class="my-2">
+        <li class="my-2 md:p-2 md:inline">
           <a class="hover:text-cyan-300 text-xl duration-150" href="#">about</a>
         </li>
-        <li class="my-2">
+        <li class="my-2 md:p-2 md:inline">
           <a class="hover:text-cyan-300 text-xl duration-150" href="#"
             >contact</a
           >
         </li>
-        <li class="my-2">
-          <a class="hover:text-cyan-300 text-xl duration-150" href="#"
-            >get started</a
+        <li class="my-2 md:p-2 md:inline">
+          <a
+            class="hover:bg-cyan-800 rounded-md px-4 py-1 bg-cyan-600 text-xl duration-150"
+            href="#"
+            >sign up</a
           >
         </li>
       </ul>
     </nav>
 
-    <div class="body py-8 px-6">
+    <div class="body py-8 px-6 md:px-14 md:pt-24">
       <p
-        class="text-center mb-4 text-4xl font-extrabold text-slate-200 cursor-default"
+        class="text-center mb-4 text-4xl font-extrabold text-slate-200 cursor-default md:text-5xl"
       >
         Landing Template for Startups
       </p>
-      <p class="text-center text-xl text-slate-300 cursor-default">
+      <p
+        class="text-center mx-auto text-xl text-slate-300 cursor-default md:w-2/4 md:break-words"
+      >
         Our landing page template works on all devices, so you only have to set
         it up once, and get beautiful results forever.
       </p>
-      <div class="flex justify-center">
+      <div class="flex justify-center md:mt-8">
         <ul>
-          <li class="mt-8">
+          <li class="mt-8 md:mt-0 md:inline md:mr-2">
             <a
-              class="bg-cyan-600 px-24 py-3 text-slate-200 rounded-md duration-150 hover:bg-cyan-800"
+              class="bg-cyan-600 px-24 py-3 text-slate-200 rounded-md duration-150 hover:bg-cyan-800 md:px-14"
               href="#"
               >Get Started</a
             >
           </li>
-          <li class="mt-8">
+          <li class="mt-8 md:mt-0 md:inline md:ml-2">
             <a
-              class="bg-zinc-800 px-24 py-3 text-slate-200 rounded-md duration-150 hover:bg-black"
+              class="bg-zinc-800 px-24 py-3 text-slate-200 rounded-md duration-150 hover:bg-black md:px-14"
               href="#"
               >Learn More</a
             >
@@ -88,24 +96,122 @@
         </ul>
       </div>
 
-      <div class="animate-con w-full grid justify-items-stretch">
-        <div class="wavy-con justify-self-start">
+      <div class="animate-con w-full grid justify-items-stretch md:px-14 pb-14">
+        <div class="wavy-con justify-self-start mt-8 md:mt-24">
           <div class="wavy1"></div>
           <div class="wavy2"></div>
           <div class="wavy3"></div>
         </div>
         <img
-          width="400vw"
-          class="animate-img cursor-pointer justify-self-center mt-20 duration-150 hover:shadow-lg hover:shadow-slate-500/50"
+          class="animate-img cursor-pointer justify-self-center mt-20 duration-150 rounded-md hover:shadow-lg hover:opacity-50 hover:shadow-slate-500/50 md:w-3/4 md:mt-36"
           src="https://www.dicoding.com/blog/wp-content/uploads/2020/04/Internship-rendi-programming-bahasa.png"
           alt=""
           srcset=""
         />
-        <div class="wavy-con2 justify-self-end">
+        <div class="wavy-con2 justify-self-end mt-60 md:mt-[35rem]">
           <div class="wavy1-sec"></div>
           <div class="wavy2-sec"></div>
           <div class="wavy3-sec"></div>
         </div>
+      </div>
+    </div>
+
+    <div class="content-con justify-items-center bg-white w-full pb-24">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path
+          fill="#18181b"
+          fill-opacity="1"
+          d="M0,160L15,154.7C30,149,60,139,90,144C120,149,150,171,180,197.3C210,224,240,256,270,277.3C300,299,330,309,360,261.3C390,213,420,107,450,101.3C480,96,510,192,540,224C570,256,600,224,630,186.7C660,149,690,107,720,128C750,149,780,235,810,229.3C840,224,870,128,900,85.3C930,43,960,53,990,80C1020,107,1050,149,1080,181.3C1110,213,1140,235,1170,218.7C1200,203,1230,149,1260,112C1290,75,1320,53,1350,85.3C1380,117,1410,203,1425,245.3L1440,288L1440,0L1425,0C1410,0,1380,0,1350,0C1320,0,1290,0,1260,0C1230,0,1200,0,1170,0C1140,0,1110,0,1080,0C1050,0,1020,0,990,0C960,0,930,0,900,0C870,0,840,0,810,0C780,0,750,0,720,0C690,0,660,0,630,0C600,0,570,0,540,0C510,0,480,0,450,0C420,0,390,0,360,0C330,0,300,0,270,0C240,0,210,0,180,0C150,0,120,0,90,0C60,0,30,0,15,0L0,0Z"
+        ></path>
+      </svg>
+
+      <p
+        class="text-center mt-14 mb-4 text-4xl font-extrabold text-zinc-800 cursor-default md:text-5xl"
+      >
+        My Portfolio
+      </p>
+      <p
+        class="text-center mx-auto text-xl text-zinc-600 cursor-default md:w-2/4 md:break-words"
+      >
+        There are some porjects that i've done before.
+      </p>
+
+      <div
+        class="portfolio-con mx-auto w-full md:flex md:justify-items-center mt-14 px-6 md:px-14"
+      >
+        <img
+          class="rounded-md mt-4 mx-auto md:w-96 md:inline-flex md:mt-0 hover:shadow-lg hover:opacity-50 duration-150 shadow-cyan-600"
+          src="https://www.lighthouselabs.ca/uploads/post/open_graph_image/459/Coding-vs-programming.jpg"
+          alt=""
+          srcset=""
+        />
+        <img
+          class="rounded-md mt-4 mx-auto md:w-96 md:inline-flex md:mt-0 hover:shadow-lg hover:opacity-50 duration-150 shadow-cyan-600"
+          src="https://www.lighthouselabs.ca/uploads/post/open_graph_image/459/Coding-vs-programming.jpg"
+          alt=""
+          srcset=""
+        />
+        <img
+          class="rounded-md mt-4 mx-auto md:w-96 md:inline-flex md:mt-0 hover:shadow-lg hover:opacity-50 duration-150 shadow-cyan-600"
+          src="https://www.lighthouselabs.ca/uploads/post/open_graph_image/459/Coding-vs-programming.jpg"
+          alt=""
+          srcset=""
+        />
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="main-footer h-52 bg-zinc-800 flex justify-between">
+        <ul class="md:p-8 md:pt-4">
+          <li class="pt-4">
+            <a href="#" class="text-white hover:text-cyan-300"
+              ><ion-icon size="small" name="logo-instagram"> </ion-icon>
+              Instagram</a
+            >
+          </li>
+          <li class="mt-4">
+            <a href="#" class="text-white hover:text-cyan-300"
+              ><ion-icon size="small" name="logo-facebook"> </ion-icon>
+              Facebook</a
+            >
+          </li>
+          <li class="mt-4">
+            <a href="#" class="text-white hover:text-cyan-300"
+              ><ion-icon size="small" name="logo-twitter"> </ion-icon>
+              Twitter</a
+            >
+          </li>
+          <li class="mt-4">
+            <a href="#" class="text-white hover:text-cyan-300"
+              ><ion-icon size="small" name="logo-youtube"> </ion-icon>
+              Youtube</a
+            >
+          </li>
+        </ul>
+
+        <ul class="md:p-8 md:pt-8">
+          <li class="pt-4">
+            <a href="#" class="text-white hover:text-cyan-300 mr-0"
+              ><ion-icon size="small" name="location-outline"> </ion-icon>
+              Indonesia</a
+            >
+          </li>
+          <li class="mt-4">
+            <a href="#" class="text-white w-8 hover:text-cyan-300"
+              ><ion-icon size="small" name="map-outline"> </ion-icon>
+              Jl.Ksadpoasdo alskjd RT12/RW20, Jawask Rwas, Surakarta.</a
+            >
+          </li>
+          <li class="mt-4">
+            <a href="#" class="text-white hover:text-cyan-300"
+              ><ion-icon size="small" name="mail-outline"> </ion-icon> Email :
+              iheadskull@gmail.com</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="sub-footer text-center py-3 bg-zinc-900 text-white text-xl">
+        Ilhmsap &copy;2022
       </div>
     </div>
 

@@ -2,14 +2,22 @@
   font-weight: bolder;
   text-decoration-thickness: 5px;
 }
+.animate-img {
+  z-index: 0;
+  overflow: hidden;
+}
 
 .wavy-con {
-  margin-top: 25px;
+  z-index: 1;
   position: absolute;
 }
 .wavy-con2 {
-  margin-top: 225px;
+  z-index: 1;
   position: absolute;
+}
+
+ion-icon {
+  font-size: 5rem !important;
 }
 
 .wavy1 {
