@@ -36,7 +36,8 @@
   width: 100px;
   height: 30px;
   right: 0;
-  margin-left: 33%;
+  max-width: 720px;
+  margin-left: auto;
   -ms-margin-left: auto;
 }
 .wavy2-sec {
@@ -45,7 +46,8 @@
   width: 125px;
   height: 30px;
   right: 0;
-  margin-left: 33%;
+  max-width: 720px;
+  margin-left: auto;
   -ms-margin-left: auto;
 }
 .wavy3-sec {
@@ -54,7 +56,8 @@
   width: 150px;
   height: 30px;
   right: 0;
-  margin-left: 33%;
+  max-width: 720px;
+  margin-left: auto;
   -ms-margin-left: auto;
 }
 
