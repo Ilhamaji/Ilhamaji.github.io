@@ -1,0 +1,94 @@
+.animate-con {
+  font-weight: bolder;
+  text-decoration-thickness: 5px;
+}
+.animate-img {
+  z-index: 0;
+  overflow: hidden;
+}
+
+.wavy-con {
+  z-index: 1;
+  position: absolute;
+}
+.wavy-con2 {
+  z-index: 1;
+  position: absolute;
+}
+
+ion-icon {
+  font-size: 5rem !important;
+}
+
+.wavy1 {
+  overflow: hidden;
+  position: relative;
+  width: 100px;
+  height: 30px;
+}
+.wavy2 {
+  overflow: hidden;
+  position: relative;
+  width: 125px;
+  height: 30px;
+}
+.wavy3 {
+  overflow: hidden;
+  position: relative;
+  width: 150px;
+  height: 30px;
+}
+.wavy1-sec {
+  overflow: hidden;
+  position: relative;
+  width: 100px;
+  height: 30px;
+  right: 0;
+  max-width: 720px;
+  margin-left: auto;
+  -ms-margin-left: auto;
+}
+.wavy2-sec {
+  overflow: hidden;
+  position: relative;
+  width: 125px;
+  height: 30px;
+  right: 0;
+  max-width: 720px;
+  margin-left: auto;
+  -ms-margin-left: auto;
+}
+.wavy3-sec {
+  overflow: hidden;
+  position: relative;
+  width: 150px;
+  height: 30px;
+  right: 0;
+  max-width: 720px;
+  margin-left: auto;
+  -ms-margin-left: auto;
+}
+
+.wavy1::before,
+.wavy2::before,
+.wavy3::before,
+.wavy1-sec::before,
+.wavy2-sec::before,
+.wavy3-sec::before {
+  content: "aaaaaaaaaaaaaaaaaaaaaaaaa";
+  position: absolute;
+  color: transparent;
+  text-decoration-style: wavy;
+  text-decoration-color: white;
+  text-decoration-line: underline;
+  animation: animate 1s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    transform: translateX(-1px);
+  }
+  100% {
+    transform: translateX(-56px);
+  }
+}
