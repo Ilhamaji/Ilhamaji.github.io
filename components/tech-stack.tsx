@@ -20,12 +20,8 @@ const techGroups = [
 
 export function TechStack() {
   return (
-    <motion.section
+    <section
       id="skills"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="py-24 px-6 border-t border-border/50"
     >
       <div className="container max-w-5xl mx-auto">
@@ -40,7 +36,7 @@ export function TechStack() {
               key={group.category}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-               viewport={{ once: true, amount: 0.2 }}
+               viewport={{ once: true, amount: 0.1 }}
                transition={{ delay: i * 0.1 }}
                style={{ willChange: "transform, opacity" }}
               className="flex flex-col h-full"

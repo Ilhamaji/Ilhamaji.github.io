@@ -104,10 +104,6 @@ export function ProjectMinimal() {
   return (
     <motion.section
       id="projects"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6 }}
       className="py-24 px-6 border-t border-border/50"
     >
       <div className="container max-w-6xl mx-auto">
@@ -130,7 +126,7 @@ export function ProjectMinimal() {
               key={p.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: i * 0.1 }}
               style={{ willChange: "transform, opacity" }}
               className="group relative p-8 glass-minimal rounded-3xl transition-all hover:bg-muted/50 border border-border/50 flex flex-col h-full"
