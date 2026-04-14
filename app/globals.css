@@ -75,7 +75,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased selection:bg-accent/20 transition-colors duration-700 ease-in-out;
+    @apply bg-background text-foreground antialiased selection:bg-accent/20 transition-[background-color,border-color,color] duration-700 ease-in-out;
   }
 }
 
@@ -108,7 +108,8 @@
 }
 
 .glass-minimal {
-  @apply bg-background/80 dark:bg-background/50 backdrop-blur-md border border-border/50 transition-all duration-700 ease-in-out;
+  @apply bg-background/80 dark:bg-background/50 backdrop-blur-md border border-border/50;
+  transition: background-color 0.7s ease-in-out, border-color 0.7s ease-in-out, box-shadow 0.7s ease-in-out;
 }
 
 .no-scrollbar::-webkit-scrollbar { display: none; }

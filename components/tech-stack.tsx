@@ -24,7 +24,7 @@ export function TechStack() {
       id="skills"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
+      viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="py-24 px-6 border-t border-border/50"
     >
@@ -40,8 +40,9 @@ export function TechStack() {
               key={group.category}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-               viewport={{ once: true, margin: "-10%" }}
+               viewport={{ once: true, amount: 0.2 }}
                transition={{ delay: i * 0.1 }}
+               style={{ willChange: "transform, opacity" }}
               className="flex flex-col h-full"
             >
               <h3 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-muted-foreground/60 border-b border-border/50 pb-4">{group.category}</h3>

@@ -106,7 +106,7 @@ export function ProjectMinimal() {
       id="projects"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "-10% 0px -10% 0px" }}
+      viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6 }}
       className="py-24 px-6 border-t border-border/50"
     >
@@ -114,7 +114,7 @@ export function ProjectMinimal() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
+          viewport={{ once: true, amount: 0.1 }}
           className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4"
         >
           <div>
@@ -130,8 +130,9 @@ export function ProjectMinimal() {
               key={p.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
+              viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: i * 0.1 }}
+              style={{ willChange: "transform, opacity" }}
               className="group relative p-8 glass-minimal rounded-3xl transition-all hover:bg-muted/50 border border-border/50 flex flex-col h-full"
             >
               <div className="flex justify-between items-start mb-6">
