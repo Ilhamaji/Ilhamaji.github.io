@@ -153,9 +153,9 @@ export function ProjectMinimal() {
                     href={p.demo} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="p-3 bg-muted rounded-2xl opacity-0 group-hover:opacity-100 transition-all hover:bg-accent hover:text-white"
+                    className="p-3 bg-accent/10 lg:bg-muted rounded-2xl opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all hover:bg-accent hover:text-white border border-accent/20 lg:border-transparent"
                   >
-                    <ArrowUpRight className="w-5 h-5" />
+                    <ArrowUpRight className="w-5 h-5 text-accent lg:text-card-foreground lg:group-hover:text-white transition-colors" />
                   </a>
                 )}
               </div>

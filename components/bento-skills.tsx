@@ -49,7 +49,7 @@ export function BentoSkills() {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black tracking-tighter text-gray-900 dark:text-white"
+            className="text-5xl md:text-7xl font-black tracking-tighter text-foreground"
           >
             Teknologi yang saya <span className="opacity-30 italic">percaya.</span>
           </motion.h2>
@@ -75,10 +75,10 @@ export function BentoSkills() {
                 </div>
 
                 <div>
-                  <h4 className="text-xl font-black text-gray-900 dark:text-white mb-4 uppercase tracking-tighter">{cat.title}</h4>
+                    <h4 className="text-xl font-black text-foreground mb-4 uppercase tracking-tighter">{cat.title}</h4>
                   <div className="flex flex-wrap gap-2">
                     {cat.skills.map(skill => (
-                      <span key={skill} className="text-[10px] font-bold bg-white/40 dark:bg-black/20 px-3 py-1 rounded-full text-gray-600 dark:text-gray-400 border border-white/20">
+                      <span key={skill} className="text-[10px] font-bold bg-white/40 dark:bg-black/20 px-3 py-1 rounded-full text-muted-foreground border border-white/20">
                         {skill}
                       </span>
                     ))}

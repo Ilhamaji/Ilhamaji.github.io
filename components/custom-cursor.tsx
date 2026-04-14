@@ -6,6 +6,7 @@ import { motion, useSpring, useMotionValue } from "framer-motion";
 export function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -15,6 +16,14 @@ export function CustomCursor() {
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
+    // Check if device has a fine pointer (mouse/trackpad)
+    const mediaQuery = window.matchMedia("(pointer: fine)");
+    setIsDesktop(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mediaQuery.addEventListener("change", handler);
+
+    if (!mediaQuery.matches) return () => mediaQuery.removeEventListener("change", handler);
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
@@ -43,11 +52,12 @@ export function CustomCursor() {
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
+      mediaQuery.removeEventListener("change", handler);
       document.body.classList.remove("custom-cursor");
     };
   }, [cursorX, cursorY]);
 
-  if (!isVisible) return null;
+  if (!isDesktop || !isVisible) return null;
 
   return (
     <>
