@@ -16,9 +16,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "M. Ilham | Portfolio",
   description: "Personal portfolio of M. Ilham, building the future with modern web technologies.",
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({
