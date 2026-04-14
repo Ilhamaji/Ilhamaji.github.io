@@ -68,6 +68,6 @@ export function TechStack() {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

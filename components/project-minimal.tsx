@@ -102,7 +102,7 @@ const projects = [
 
 export function ProjectMinimal() {
   return (
-    <motion.section
+    <section
       id="projects"
       className="py-24 px-6 border-t border-border/50"
     >
@@ -204,6 +204,6 @@ export function ProjectMinimal() {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
