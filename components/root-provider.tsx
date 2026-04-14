@@ -17,7 +17,7 @@ export function RootProvider({
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="light"
+      defaultTheme="system"
       enableSystem
     >
       <AnimatePresence mode="wait">

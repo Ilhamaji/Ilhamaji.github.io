@@ -42,6 +42,7 @@ export function BentoSkills() {
           <motion.span 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
             className="text-primary font-black uppercase tracking-[0.4em] text-xs mb-4 block"
           >
             Alat & Keahlian
@@ -49,6 +50,7 @@ export function BentoSkills() {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             className="text-5xl md:text-7xl font-black tracking-tighter text-foreground"
           >
             Teknologi yang saya <span className="opacity-30 italic">percaya.</span>
