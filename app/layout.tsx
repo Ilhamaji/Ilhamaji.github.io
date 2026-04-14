@@ -1,13 +1,7 @@
-"use client";
-
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { CustomCursor } from "@/components/custom-cursor";
-import { Preloader } from "@/components/preloader";
-import { FloatingDock } from "@/components/floating-dock";
-import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { RootProvider } from "@/components/root-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,13 +13,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata: Metadata = {
+  title: "M. Ilham | Portfolio",
+  description: "Personal portfolio of M. Ilham, building the future with modern web technologies.",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [loading, setLoading] = useState(true);
-
   return (
     <html
       lang="id"
@@ -33,29 +33,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-minimal font-sans no-scrollbar">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-        >
-          <AnimatePresence mode="wait">
-            {loading ? (
-              <Preloader key="loader" onComplete={() => setLoading(false)} />
-            ) : (
-              <motion.div 
-                key="content"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <CustomCursor />
-                <FloatingDock />
-                {children}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </ThemeProvider>
+        <RootProvider>
+          {children}
+        </RootProvider>
       </body>
     </html>
   );
 }
+
