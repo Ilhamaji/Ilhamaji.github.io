@@ -7,6 +7,7 @@ export function CustomCursor() {
 
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const ringVisualRef = useRef<HTMLDivElement>(null);
 
   const mousePos = useRef({ x: -100, y: -100 });
   const ringPos = useRef({ x: -100, y: -100 });
@@ -51,13 +52,13 @@ export function CustomCursor() {
 
       if (interactive !== isHovering.current) {
         isHovering.current = interactive;
-        if (ringRef.current) {
+        if (ringVisualRef.current) {
           if (interactive) {
-            ringRef.current.classList.add("scale-150", "border-accent", "bg-accent/10");
-            ringRef.current.classList.remove("border-foreground/30");
+            ringVisualRef.current.classList.add("scale-150", "border-accent", "bg-accent/15");
+            ringVisualRef.current.classList.remove("border-foreground/30");
           } else {
-            ringRef.current.classList.remove("scale-150", "border-accent", "bg-accent/10");
-            ringRef.current.classList.add("border-foreground/30");
+            ringVisualRef.current.classList.remove("scale-150", "border-accent", "bg-accent/15");
+            ringVisualRef.current.classList.add("border-foreground/30");
           }
         }
       }
@@ -71,12 +72,12 @@ export function CustomCursor() {
 
     // Animation Loop using RAF for 120 FPS hardware acceleration
     const render = () => {
-      // Direct 1:1 hardware position for dot
+      // Direct 1:1 hardware position for dot container
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${mousePos.current.x}px, ${mousePos.current.y}px, 0)`;
       }
 
-      // Smooth fast linear interpolation (LERP) for ring without spring calculation overhead
+      // Smooth fast linear interpolation (LERP) for ring container
       const ease = 0.25; // Responsive & smooth follow rate
       ringPos.current.x += (mousePos.current.x - ringPos.current.x) * ease;
       ringPos.current.y += (mousePos.current.y - ringPos.current.y) * ease;
@@ -112,18 +113,27 @@ export function CustomCursor() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
-      {/* Smooth Outer Ring */}
+      {/* Outer Ring Position Container (RAF translate3d) */}
       <div
         ref={ringRef}
-        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-foreground/30 pointer-events-none opacity-0 transition-transform duration-200 ease-out transition-colors will-change-transform"
-      />
+        className="fixed top-0 left-0 w-8 h-8 -ml-4 -mt-4 pointer-events-none opacity-0 will-change-transform"
+      >
+        {/* Inner Visual Ring (Handles CSS scale & color transitions cleanly without offsetting position) */}
+        <div
+          ref={ringVisualRef}
+          className="w-full h-full rounded-full border border-foreground/30 transition-all duration-300 ease-out"
+        />
+      </div>
 
-      {/* Precise 1:1 Dot */}
+      {/* Precise 1:1 Dot Position Container */}
       <div
         ref={dotRef}
-        className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-foreground pointer-events-none opacity-0 will-change-transform"
-      />
+        className="fixed top-0 left-0 w-1.5 h-1.5 -ml-[3px] -mt-[3px] pointer-events-none opacity-0 will-change-transform"
+      >
+        <div className="w-full h-full rounded-full bg-foreground" />
+      </div>
     </div>
   );
 }
+
 
