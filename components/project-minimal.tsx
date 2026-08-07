@@ -33,7 +33,7 @@ const projects = [
       "Maintained accurate real-time data flow across the entire platform"
     ],
     tech: ["Laravel", "PHP", "MySQL", "Tailwind CSS", "Excel"],
-    github: null,
+    github: "https://github.com/Ilhamaji/academy-dashboard",
     demo: null,
     isFeatured: true,
     tag: "Institutional Platform"
@@ -66,25 +66,25 @@ const projects = [
     ],
     tech: ["Node.js", "Discord.js", "Groq", "OpenAI", "Gemini API", "FFmpeg"],
     github: "https://github.com/Ilhamaji/ai-bot",
-    demo: "https://discord.com/oauth2/authorize?client_id=1308770920562823228",
+    demo: "https://ai-bot-seven-puce.vercel.app",
     isFeatured: false,
     tag: "Open Source AI"
   },
   {
-    title: "KB PAUD Desa Banaran Web Portal",
-    subtitle: "Community Project",
-    description: "Responsive web portal and management system for early childhood education center student registration and activity management.",
+    title: "Interactive CV Maker",
+    subtitle: "Web Application",
+    description: "Interactive web application for creating and customizing professional resumes with real-time formatting and instant export capabilities.",
     features: [
-      "Responsive student registration & re-enrollment system",
-      "Institutional activity & article CRUD content management",
-      "Firebase backend authentication & activity storage",
-      "Supabase data persistence for administrative monitoring"
+      "Real-time resume live preview and template customization",
+      "Structured section management (Experience, Skills, Education)",
+      "Instant export to clean, print-ready PDF formats",
+      "Responsive user interface built with Vue.js & Tailwind CSS"
     ],
-    tech: ["React", "Tailwind CSS", "Firebase", "Supabase", "React Router"],
-    github: null,
-    demo: "https://paud-banaran.web.app",
+    tech: ["React", "Tailwind CSS", "TypeScript"],
+    github: "https://github.com/Ilhamaji/cvmaker",
+    demo: null,
     isFeatured: false,
-    tag: "Web System"
+    tag: "Web Tool"
   },
   {
     title: "Cek Resi All - Multi-Courier Tracker",
@@ -101,6 +101,54 @@ const projects = [
     demo: "https://ilhamaji.github.io/cek-resi-all",
     isFeatured: false,
     tag: "Web Utility"
+  },
+  {
+    title: "PokéDex Modern & Deck Analysis",
+    subtitle: "Interactive Encyclopedia",
+    description: "Vibrant Pokémon encyclopedia featuring 1,025+ Pokémon database (Gen 1-9), TCG card gallery, and competitive deck recommendations.",
+    features: [
+      "Comprehensive 1,025+ Pokémon database from Gen 1 to Gen 9",
+      "TCG card gallery with competitive meta deck analysis",
+      "Smart search & attribute type filtering",
+      "Responsive glassmorphic UI design"
+    ],
+    tech: ["React", "Vite", "Tailwind CSS", "Axios", "PokéAPI"],
+    github: "https://github.com/Ilhamaji/pokedex",
+    demo: "https://ilhamaji.github.io/pokedex",
+    isFeatured: false,
+    tag: "Web App"
+  },
+  {
+    title: "Global Weather Dashboard",
+    subtitle: "Weather Utility App",
+    description: "Real-time global weather dashboard featuring localized auto-detection, city search, and 5-day visual forecasts.",
+    features: [
+      "Automatic user geolocation detection for local weather query",
+      "Global city search and hourly/5-day visual forecasts",
+      "Dynamic weather-based theme adjustments",
+      "Fast API response powered by OpenWeather Integration"
+    ],
+    tech: ["React", "Vite", "Tailwind CSS", "OpenWeather", "Axios"],
+    github: "https://github.com/Ilhamaji/weather-app",
+    demo: "https://ilhamaji.github.io/weather-app",
+    isFeatured: false,
+    tag: "Web App"
+  },
+  {
+    title: "KB PAUD Desa Banaran Web Portal",
+    subtitle: "Community Project",
+    description: "Responsive web portal and management system for early childhood education center student registration and activity management.",
+    features: [
+      "Responsive student registration & re-enrollment system",
+      "Institutional activity & article CRUD content management",
+      "Firebase backend authentication & activity storage",
+      "Supabase data persistence for administrative monitoring"
+    ],
+    tech: ["React", "Tailwind CSS", "Firebase", "Supabase", "React Router"],
+    github: null,
+    demo: "https://paud-banaran.web.app",
+    isFeatured: false,
+    tag: "Web System"
   }
 ];
 
