@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "M. Ilham Aji Saputra | Full-Stack Web Developer & AI Specialist",
+  title: "M. Ilham Aji Saputra | Full-Stack Web Developer & AI Engineer",
   description:
-    "Portfolio of M. Ilham Aji Saputra — Full-Stack Web Developer & Natural Language Processing (NLP) Specialist skilled in Next.js, Laravel, Python, Llama-3.3, Groq API, and Google Cloud Platform (GCP).",
+    "Portfolio of M. Ilham Aji Saputra — Full-Stack Web Developer & Natural Language Processing (NLP) Engineer skilled in Next.js, Laravel, Python, Llama-3.3, Groq API, and Google Cloud Platform (GCP).",
   keywords: [
     "M. Ilham Aji Saputra",
     "Full-Stack Developer",
-    "NLP Specialist",
+    "NLP Engineer",
     "AI Engineer",
     "Next.js Developer",
     "Laravel Developer",
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "M. Ilham Aji Saputra", url: "https://ilhamaji.github.io" }],
   openGraph: {
-    title: "M. Ilham Aji Saputra | Full-Stack Web Developer & AI Specialist",
+    title: "M. Ilham Aji Saputra | Full-Stack Web Developer & AI Engineer",
     description:
-      "Full-Stack Web Developer & NLP Specialist skilled in Next.js, Laravel, Python, Llama 3.3 AI modules, and GCP cloud infrastructure.",
+      "Full-Stack Web Developer & NLP Engineer skilled in Next.js, Laravel, Python, Llama 3.3 AI modules, and GCP cloud infrastructure.",
     url: "https://ilhamaji.github.io",
     siteName: "M. Ilham Aji Saputra Portfolio",
     locale: "id_ID",

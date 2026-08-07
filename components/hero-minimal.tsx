@@ -6,7 +6,7 @@ import { LinkedinIcon, GithubIcon } from "@/components/icons";
 
 export function HeroMinimal() {
   const bio =
-    "Full-Stack Web Developer & NLP Specialist with expertise in building scalable web applications, AI module integration (Groq Llama 3.3, PyMuPDF, Prompt Engineering), and cloud deployments (GCP, Firebase). Skilled in Next.js, Laravel, Node.js, Python, and secure RESTful APIs.";
+    "Full-Stack Web Developer & NLP Engineer with expertise in building scalable web applications, AI module integration (Groq Llama 3.3, PyMuPDF, Prompt Engineering), and cloud deployments (GCP, Firebase). Skilled in Next.js, Laravel, Node.js, Python, and secure RESTful APIs.";
 
   return (
     <motion.section
@@ -27,7 +27,7 @@ export function HeroMinimal() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent font-mono text-xs uppercase tracking-wider mb-6">
             <Sparkles className="w-3.5 h-3.5" />
-            Full-Stack Web Developer & NLP Specialist
+            Full-Stack Web Developer & NLP Engineer
           </div>
 
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground leading-[1.05] mb-4">
