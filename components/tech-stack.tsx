@@ -2,70 +2,132 @@
 
 import { motion } from "framer-motion";
 import { TECH_ICONS } from "@/components/tech-icons";
+import { Cpu, Cloud, Code, Database, Sparkles } from "lucide-react";
 
-const techGroups = [
+const skillCategories = [
   {
-    category: "Development",
-    items: ["React", "Next.js", "Laravel", "Node.js"]
+    category: "Languages & Frameworks",
+    icon: Code,
+    description: "Full-Stack Web Engineering",
+    items: [
+      { name: "Next.js", level: "Expert" },
+      { name: "React", level: "Advanced" },
+      { name: "Laravel", level: "Advanced" },
+      { name: "Node.js", level: "Advanced" },
+      { name: "PHP", level: "Advanced" },
+      { name: "TypeScript", level: "Proficient" },
+      { name: "Tailwind CSS", level: "Expert" },
+      { name: "MySQL", level: "Proficient" }
+    ]
   },
   {
-    category: "Foundations",
-    items: ["TypeScript", "Tailwind CSS", "PHP", "MySQL"]
+    category: "AI & Natural Language Processing",
+    icon: Cpu,
+    description: "LLM Integration & Text Mining",
+    items: [
+      { name: "Groq", level: "Llama-3.3 Integration" },
+      { name: "OpenAI", level: "Multimodal LLM" },
+      { name: "Gemini API", level: "Vision & Reasoning" },
+      { name: "PDF", level: "PyMuPDF Extraction" },
+      { name: "Prompt Engineering", level: "Structured Output" },
+      { name: "NLP", level: "Summarization Models" }
+    ]
   },
   {
-    category: "Integrations",
-    items: ["Firebase", "Supabase", "GCP", "Vercel"]
+    category: "Cloud & DevSecOps",
+    icon: Cloud,
+    description: "Scalable Infrastructure & Deployment",
+    items: [
+      { name: "GCP", level: "Google Cloud Platform" },
+      { name: "Firebase", level: "Auth & Realtime DB" },
+      { name: "Vercel", level: "Frontend Deployment" },
+      { name: "Supabase", level: "Database & Backend" },
+      { name: "JWT", level: "Secure Auth APIs" },
+      { name: "Git", level: "Version Control" }
+    ]
   }
 ];
 
 export function TechStack() {
   return (
-    <section
-      id="skills"
-      className="py-24 px-6 border-t border-border/50"
-    >
-      <div className="container max-w-5xl mx-auto">
-        <div className="mb-16">
-          <span className="text-accent font-mono text-xs uppercase tracking-[0.4em] mb-4 block">Ecosystem</span>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground underline decoration-accent/10 decoration-8 underline-offset-8">Tech Stack.</h2>
-        </div>
+    <section id="skills" className="py-24 px-6 border-t border-border/50">
+      <div className="container max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4"
+        >
+          <div>
+            <span className="text-accent font-mono text-xs uppercase tracking-[0.4em] mb-4 block">
+              Technical Ecosystem
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+              Skills & Expertise.
+            </h2>
+          </div>
+          <p className="text-muted-foreground max-w-xs text-sm font-medium">
+            Core stack combining Full-Stack Web Development, AI/NLP engineering, and Cloud infrastructure.
+          </p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          {techGroups.map((group, i) => (
-            <motion.div
-              key={group.category}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-               viewport={{ once: true, amount: 0.1 }}
-               transition={{ delay: i * 0.1 }}
-               style={{ willChange: "transform, opacity" }}
-              className="flex flex-col h-full"
-            >
-              <h3 className="text-sm font-bold uppercase tracking-[0.2em] mb-8 text-muted-foreground/60 border-b border-border/50 pb-4">{group.category}</h3>
-              <div className="grid grid-cols-1 gap-6">
-                {group.items.map(item => {
-                  const entry = TECH_ICONS[item];
-                  return (
-                    <div key={item} className="group/tech flex items-center gap-4 hover:translate-x-1 transition-transform cursor-default">
-                      <div className="p-2.5 rounded-xl bg-muted/30 group-hover/tech:bg-muted/50 transition-colors">
-                        {entry ? (
-                          <entry.icon 
-                            className="w-6 h-6 transition-all" 
-                            style={{ color: entry.color }}
-                          />
-                        ) : (
-                          <div className="w-6 h-6 rounded-full bg-accent/20" />
-                        )}
-                      </div>
-                      <span className="text-lg font-semibold text-foreground/80 group-hover/tech:text-foreground transition-colors tracking-tight">
-                        {item}
-                      </span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {skillCategories.map((cat, i) => {
+            const CatIcon = cat.icon;
+            return (
+              <motion.div
+                key={cat.category}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ delay: i * 0.1 }}
+                className="p-8 glass-minimal rounded-3xl border border-border/50 hover:bg-muted/40 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 rounded-2xl bg-accent/10 border border-accent/20 text-accent">
+                      <CatIcon className="w-5 h-5" />
                     </div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          ))}
+                    <div>
+                      <h3 className="text-xl font-bold text-foreground tracking-tight">
+                        {cat.category}
+                      </h3>
+                      <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                        {cat.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {cat.items.map((item) => {
+                      const entry = TECH_ICONS[item.name];
+                      const Icon = entry?.icon;
+                      return (
+                        <div
+                          key={item.name}
+                          className="flex items-center justify-between p-3 rounded-2xl bg-muted/30 hover:bg-muted/60 transition-colors border border-border/30"
+                        >
+                          <div className="flex items-center gap-3">
+                            {Icon ? (
+                              <Icon className="w-5 h-5 shrink-0" style={{ color: entry.color }} />
+                            ) : (
+                              <Sparkles className="w-4 h-4 text-accent shrink-0" />
+                            )}
+                            <span className="text-sm font-semibold text-foreground tracking-tight">
+                              {item.name}
+                            </span>
+                          </div>
+                          <span className="text-[11px] font-mono text-muted-foreground bg-muted/50 px-2.5 py-0.5 rounded-full border border-border/40">
+                            {item.level}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

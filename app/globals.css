@@ -23,8 +23,9 @@
 }
 
 @media (pointer: fine) {
-  html {
-    cursor: none; /* Hide default for CustomCursor on devices with mouse/trackpad */
+  body.custom-cursor,
+  body.custom-cursor * {
+    cursor: none !important;
   }
 }
 
