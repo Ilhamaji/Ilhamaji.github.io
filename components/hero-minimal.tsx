@@ -116,8 +116,8 @@ export function HeroMinimal() {
             <div className="text-xs text-muted-foreground font-medium mt-1">Professional Roles & Projects</div>
           </div>
           <div>
-            <div className="text-2xl md:text-3xl font-bold text-foreground font-mono">AI / NLP</div>
-            <div className="text-xs text-muted-foreground font-medium mt-1">Llama 3.3 & Groq Summarizer</div>
+            <div className="text-2xl md:text-3xl font-bold text-foreground font-mono">AI Integration</div>
+            <div className="text-xs text-muted-foreground font-medium mt-1">LLM & PDF Processing Pipelines</div>
           </div>
           <div>
             <div className="text-2xl md:text-3xl font-bold text-foreground font-mono">Full-Stack</div>
