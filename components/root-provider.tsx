@@ -19,6 +19,7 @@ export function RootProvider({
       attribute="class"
       defaultTheme="system"
       enableSystem
+      disableTransitionOnChange
     >
       <AnimatePresence mode="wait">
         {loading ? (
