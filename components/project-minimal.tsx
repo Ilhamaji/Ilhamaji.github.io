@@ -66,7 +66,7 @@ const projects = [
     ],
     tech: ["Node.js", "Discord.js", "Groq", "OpenAI", "Gemini API", "FFmpeg"],
     github: "https://github.com/Ilhamaji/ai-bot",
-    demo: "https://ai-bot-seven-puce.vercel.app",
+    demo: "https://discord.com/oauth2/authorize?client_id=1308770920562823228",
     isFeatured: false,
     tag: "Open Source AI"
   },
