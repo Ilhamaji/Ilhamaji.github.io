@@ -94,25 +94,47 @@ export function Navbar() {
         </a>
 
         <ul className="hidden items-center gap-1 md:flex">
-          {NAV.map((item) => (
-            <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                aria-current={active === item.id ? "page" : undefined}
-                className={cn(
-                  "relative inline-flex min-h-[44px] items-center px-3 text-sm transition-colors",
-                  active === item.id
-                    ? "text-cream"
-                    : "text-muted hover:text-cream"
-                )}
-              >
-                {item.label}
-                {active === item.id && (
-                  <Underline className="absolute inset-x-2 bottom-2 h-2 text-lime" />
-                )}
-              </a>
-            </li>
-          ))}
+          {NAV.map((item) => {
+            const isActive = active === item.id;
+            return (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "group relative inline-flex min-h-[44px] items-center px-3 text-sm transition-colors duration-200",
+                    isActive ? "text-cream" : "text-muted hover:text-cream"
+                  )}
+                >
+                  {item.label}
+
+                  {/*
+                    Every item carries its own underline; only the active one is
+                    visible. Keeping it mounted is what makes the transition
+                    possible: a node that appears only when active has nothing to
+                    animate from, which is why the old version popped in and out.
+
+                    The svg needs an explicit w-full: Tailwind's inset-x-2 sizes
+                    an absolutely positioned element from both edges only when a
+                    width is present, otherwise it falls back to the SVG's
+                    intrinsic 300x18 box and overflows the link.
+                  */}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "pointer-events-none absolute bottom-2 left-2 right-2 h-2",
+                      "origin-left transition-[opacity,scale] duration-300 ease-out",
+                      isActive
+                        ? "scale-x-100 opacity-100"
+                        : "scale-x-0 opacity-0"
+                    )}
+                  >
+                    <Underline className="h-full w-full text-lime" strokeWidth={7} />
+                  </span>
+                </a>
+              </li>
+            );
+          })}
         </ul>
 
         <div className="hidden md:block">

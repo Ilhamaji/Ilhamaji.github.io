@@ -2,9 +2,9 @@
 
 import { ArrowUpRight, Download } from "lucide-react";
 import { BrutalButton, SectionHead, Tape } from "@/components/brutal/ui";
-import { Reveal, Drift } from "@/components/brutal/reveal";
+import { Reveal } from "@/components/brutal/reveal";
 import { Mascot } from "@/components/brutal/mascot";
-import { Sparkle, Crown } from "@/components/brutal/doodles";
+import { Crown } from "@/components/brutal/doodles";
 
 const BIO =
   "Full-Stack Web Developer & NLP Engineer with expertise in building scalable web applications, AI module integration (Groq Llama 3.3, PyMuPDF, Prompt Engineering), and cloud deployments (GCP, Firebase). Skilled in Next.js, Laravel, Node.js, Python, and secure RESTful APIs.";
@@ -21,12 +21,9 @@ export function About() {
                 Focus · Discipline · Consistency
               </Tape>
               <Crown className="absolute right-5 top-5 h-7 w-9 text-ink" />
-              <div className="w-[52%] max-w-[210px]">
+              <div className="mt-8 w-[52%] max-w-[210px]">
                 <Mascot />
               </div>
-              <Drift className="absolute bottom-4 right-4" distance={5}>
-                <Sparkle className="h-6 w-6 text-ink" />
-              </Drift>
             </div>
 
             {/* text panel */}

@@ -26,13 +26,25 @@ export function Squiggle({ className }: DoodleProps) {
   );
 }
 
-export function Underline({ className }: DoodleProps) {
+/**
+ * The lime highlighter stroke under a heading.
+ *
+ * `preserveAspectRatio="none"` stretches the curve to any width, so the stroke
+ * width has to be chosen per call site: 10 suits a hero-sized underline, a
+ * navbar link needs ~14 to stay visible after the 18-unit viewBox is squashed
+ * into an 8px-tall box. `vectorEffect` is deliberately not used — it would pin
+ * the stroke to device pixels and make the hero underline hairline thin.
+ */
+export function Underline({
+  className,
+  strokeWidth = 10,
+}: DoodleProps & { strokeWidth?: number }) {
   return (
     <svg viewBox="0 0 300 18" aria-hidden="true" className={cn(base, className)} fill="none" preserveAspectRatio="none">
       <path
         d="M4 12c46-7 92-9 138-6 46 3 92 2 154-5"
         stroke="currentColor"
-        strokeWidth="10"
+        strokeWidth={strokeWidth}
         strokeLinecap="round"
       />
     </svg>

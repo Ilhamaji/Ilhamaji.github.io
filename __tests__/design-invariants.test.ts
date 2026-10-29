@@ -272,6 +272,48 @@ describe("tech icon legibility", () => {
 });
 
 /* ------------------------------------------------------------------ */
+/* Navbar underline.                                                  */
+/* ------------------------------------------------------------------ */
+describe("navbar underline", () => {
+  const src = () => read("components/navbar.tsx");
+
+  it("sizes the svg explicitly instead of relying on inset-x", () => {
+    // An absolutely positioned SVG with only left/right set falls back to its
+    // intrinsic 300x18 box and overflows the link. It rendered 133px wide
+    // inside a 62px link before this guard existed.
+    expect(src()).toMatch(/w-full/);
+    expect(src()).toMatch(/left-2 right-2/);
+  });
+
+  it("keeps the underline mounted so it can transition", () => {
+    // Rendering the svg conditionally on `isActive` leaves nothing to animate
+    // from, which is why it used to pop in and out.
+    const body = src();
+    expect(body).not.toMatch(/\{active === item\.id && \(/);
+    expect(body).toMatch(/scale-x-0/);
+    expect(body).toMatch(/scale-x-100/);
+  });
+
+  it("transitions scale, not transform", () => {
+    // Tailwind v4 implements scale-x-* with the `scale` property, so a
+    // transition limited to `transform` animates nothing.
+    expect(src()).toMatch(/transition-\[opacity,scale\]/);
+    expect(src()).not.toMatch(/transition-\[opacity,transform\]/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* The About panel keeps only its deliberate decoration.              */
+/* ------------------------------------------------------------------ */
+describe("about panel", () => {
+  it("has no sparkle in the corner", () => {
+    const src = read("components/about.tsx");
+    expect(src).not.toMatch(/Sparkle/);
+    expect(src).not.toMatch(/Drift/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
 /* GitHub Pages runs a legacy Jekyll build over the repo.             */
 /* ------------------------------------------------------------------ */
 describe("github pages / jekyll safety", () => {
@@ -279,12 +321,15 @@ describe("github pages / jekyll safety", () => {
     // Jekyll renders every .md through Liquid. A React snippet like
     // {{opacity:0,y:20}} crashes the build with a syntax error, which is
     // exactly what happened on the redesign commit.
+    //
+    // Only source markdown counts. out/ and .next/ are build artifacts that
+    // appear and vanish while a build runs, so scanning them makes this test
+    // flaky when it races `npm run build`.
+    const SKIP = ["node_modules", ".next", "out", ".git", ".firebase"];
     const md = walk(".").filter(
       (f) =>
         f.endsWith(".md") &&
-        !f.includes("node_modules") &&
-        !f.startsWith("out") &&
-        !f.startsWith(".next")
+        !SKIP.some((dir) => f.split(/[\\/]/).includes(dir))
     );
     expect(md.length).toBeGreaterThan(0);
 
