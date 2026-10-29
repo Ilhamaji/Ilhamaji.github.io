@@ -31,12 +31,14 @@ const HOLD_MS = 120; // section title sits on screen before handing over
 const FADE_MS = 340; // overlay dims out over the scrolled page
 
 export type ZoomState = {
-  rect: { top: number; left: number; width: number; height: number };
+  /** Where the window starts: the tile's own rect. */
+  start: { top: number; left: number; width: number; height: number };
+  /** Where it ends: the near-fullscreen frame, inset from the viewport. */
+  end: { top: number; left: number; width: number; height: number };
   accent: string;
   label: string;
   meta: string;
-  scale: number;
-  /** "zoom" grows the tile, "hold" keeps it, "fade" dissolves it. */
+  /** "zoom" grows the window, "hold" keeps it, "fade" dissolves it. */
   phase: "zoom" | "hold" | "fade";
 };
 
@@ -91,17 +93,24 @@ export function useZoomToSection() {
       }
 
       const r = el.getBoundingClientRect();
-      const scale = Math.max(
-        window.innerWidth / Math.max(r.width, 1),
-        window.innerHeight / Math.max(r.height, 1)
-      );
+
+      // The window grows from the tile into a frame that stops short of the
+      // viewport edge: "almost fullscreen" reads as a window you opened, while
+      // an edge-to-edge fill just reads as the page changing colour.
+      const inset = window.innerWidth < 640 ? 10 : 24;
+      const end = {
+        top: inset,
+        left: inset,
+        width: window.innerWidth - inset * 2,
+        height: window.innerHeight - inset * 2,
+      };
 
       const base = {
-        rect: { top: r.top, left: r.left, width: r.width, height: r.height },
+        start: { top: r.top, left: r.left, width: r.width, height: r.height },
+        end,
         accent: tile.accent,
         label: tile.label,
         meta: tile.meta,
-        scale,
       };
 
       setZooming({ ...base, phase: "zoom" });

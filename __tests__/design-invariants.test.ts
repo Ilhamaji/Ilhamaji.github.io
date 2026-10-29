@@ -508,9 +508,41 @@ describe("hero window", () => {
     expect(scrollIdx).toBeGreaterThan(timeoutIdx);
   });
 
+  it("grows a window frame instead of scaling the flat card", () => {
+    // Scaling the card stretched its text and read as a colour flash. The
+    // transition measures the tile, then animates a real window frame
+    // (width/height/top/left) toward a near-fullscreen rect.
+    const src = window_();
+    expect(src).toMatch(/zooming\.start\.top/);
+    expect(src).toMatch(/zooming\.end\.top/);
+    expect(src).toMatch(/zooming\.end\.width/);
+    expect(src).not.toMatch(/scale: zooming\.scale/);
+    // The frame carries the same chrome as the real windows.
+    expect(src).toMatch(/bg-\[#ff5f57\]/);
+  });
+
+  it("stops short of the viewport edge so it reads as a window", () => {
+    // Edge-to-edge fill reads as the page changing colour, not as a window
+    // being opened.
+    const src = tiles();
+    expect(src).toMatch(/const inset =/);
+    expect(src).toMatch(/window\.innerWidth - inset \* 2/);
+    expect(src).toMatch(/window\.innerHeight - inset \* 2/);
+  });
+
+  it("is opaque from the first frame", () => {
+    // An opacity that starts at 0 lets the page show through the frame while
+    // it opens.
+    const src = window_();
+    expect(src).toMatch(/initial=\{\{ opacity: 1/);
+  });
+
+  it("renders the destination title inside the frame", () => {
+    expect(window_()).toMatch(/\{zooming\.label\}/);
+  });
+
   it("runs three distinct phases, not one cut-off scale", () => {
     // zoom -> hold (title on screen) -> fade over the already-scrolled page.
-    // A single scale-up interrupted by a scroll is what looked unfinished.
     const src = tiles();
     expect(src).toMatch(/phase: "zoom"/);
     expect(src).toMatch(/phase: "hold"/);
@@ -518,12 +550,6 @@ describe("hero window", () => {
     expect(src).toMatch(/ZOOM_MS/);
     expect(src).toMatch(/HOLD_MS/);
     expect(src).toMatch(/FADE_MS/);
-  });
-
-  it("shows the destination title during the transition", () => {
-    // The title is the bridge between the two animations.
-    const src = read("components/hero-window.tsx");
-    expect(src).toMatch(/\{zooming\.label\}/);
   });
 
   it("cancels a scroll already in flight on a second click", () => {
