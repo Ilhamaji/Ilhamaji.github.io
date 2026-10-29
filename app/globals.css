@@ -33,6 +33,9 @@
   html {
     scroll-behavior: smooth;
     background-color: var(--color-ink);
+    /* The navbar is fixed and 64px tall. Without this every in-page jump parks
+       the section top under the header, hiding its heading. */
+    scroll-padding-top: 5rem;
   }
 
   body {
