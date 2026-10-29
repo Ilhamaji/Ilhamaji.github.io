@@ -1,8 +1,9 @@
 "use client";
 
 import { ArrowUpRight, Download } from "lucide-react";
-import { GlassButton, GlassCard, SectionHead } from "@/components/glass/ui";
+import { GlassButton, SectionHead } from "@/components/glass/ui";
 import { Reveal } from "@/components/reveal";
+import { SectionWindow } from "@/components/section-window";
 
 const BIO =
   "Full-Stack Web Developer & NLP Engineer with expertise in building scalable web applications, AI module integration (Groq Llama 3.3, PyMuPDF, Prompt Engineering), and cloud deployments (GCP, Firebase). Skilled in Next.js, Laravel, Node.js, Python, and secure RESTful APIs.";
@@ -17,7 +18,7 @@ export function About() {
     <section id="about" className="px-6 py-16 md:py-20" aria-labelledby="about-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <GlassCard className="p-6 md:p-10">
+          <SectionWindow title="About" subtitle="A little context" accent="#0f9d58">
             <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
               {/* text panel */}
               <div>
@@ -62,7 +63,7 @@ export function About() {
                 </GlassButton>
               </div>
             </div>
-          </GlassCard>
+          </SectionWindow>
         </Reveal>
       </div>
     </section>

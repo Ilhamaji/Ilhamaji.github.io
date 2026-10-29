@@ -3,6 +3,7 @@
 import { Calendar, MapPin } from "lucide-react";
 import { GlassCard, Pill, SectionHead } from "@/components/glass/ui";
 import { Reveal } from "@/components/reveal";
+import { SectionWindow } from "@/components/section-window";
 import { EXPERIENCES } from "@/lib/experience";
 
 export function ExperienceSection() {
@@ -10,14 +11,14 @@ export function ExperienceSection() {
     <section id="experience" className="px-6 py-16 md:py-20" aria-labelledby="experience-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <SectionHead
-            id="experience-heading"
-            eyebrow="Where I've worked"
-            title="Experience"
-          />
-        </Reveal>
+          <SectionWindow title="Experience" subtitle="Where I've worked" accent="#e8710a">
+            <SectionHead
+              id="experience-heading"
+              eyebrow="Where I've worked"
+              title="Experience"
+            />
 
-        <ol className="mt-10 space-y-4">
+            <ol className="mt-6 space-y-4">
           {EXPERIENCES.map((item, i) => (
             <li key={`${item.role}-${item.company}`}>
               <Reveal delay={i * 0.05}>
@@ -68,6 +69,8 @@ export function ExperienceSection() {
             </li>
           ))}
         </ol>
+          </SectionWindow>
+        </Reveal>
       </div>
     </section>
   );

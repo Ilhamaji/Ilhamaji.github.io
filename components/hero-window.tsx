@@ -4,6 +4,7 @@ import { useCallback, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { HERO_TILES, useZoomToSection, type HeroTile } from "@/components/hero-tiles";
+import { TilePreview } from "@/components/tile-previews";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
 
@@ -53,20 +54,29 @@ function Tile({
             style={{ background: tile.accent }}
           />
 
-          <span
-            aria-hidden="true"
-            className="relative mb-2 inline-flex h-6 w-6 items-center justify-center rounded-md"
-            style={{ background: tile.accent }}
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-white/90" />
-          </span>
+          {/* The miniature of the real section, so the card previews its
+              destination instead of only naming it. The fixed aspect keeps
+              every card the same height regardless of how much content its
+              preview has. */}
+          <div className="relative mb-2.5 min-h-[86px] overflow-hidden rounded-[8px] border border-separator bg-surface-2/60 p-2">
+            <TilePreview target={tile.target} />
+          </div>
 
-          <span className="relative text-[13px] font-semibold text-label">{tile.label}</span>
-          <span className="relative mt-0.5 text-[11px] leading-snug text-label-2">{tile.meta}</span>
+          <span className="relative flex items-center gap-1.5 text-[12px] font-semibold text-label">
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: tile.accent }}
+            />
+            {tile.label}
+          </span>
+          <span className="relative mt-0.5 text-[10px] leading-snug text-label-2">
+            {tile.meta}
+          </span>
 
           <ArrowUpRight
             aria-hidden="true"
-            className="relative mt-auto h-3.5 w-3.5 text-label-3 transition-colors group-hover:text-accent"
+            className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-label-3 opacity-0 transition-opacity group-hover:opacity-100"
           />
         </motion.button>
       </Reveal>

@@ -21,7 +21,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative px-6 pt-32 md:pt-40"
+      className="relative px-6 pt-28 md:pt-32"
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto max-w-3xl">

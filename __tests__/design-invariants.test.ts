@@ -538,6 +538,62 @@ describe("hero window", () => {
     expect(src).toMatch(/setProperty\("--rx"/);
     expect(src).toMatch(/onPointerMove/);
   });
+
+  it("previews the real content of each destination", () => {
+    // The cards used to show only a title and a caption, which read as
+    // unfinished. Each one now renders a miniature built from the same data
+    // the section itself uses, so the two cannot drift apart.
+    const previews = read("components/tile-previews.tsx");
+    expect(previews).toMatch(/from "@\/lib\/projects"/);
+    expect(previews).toMatch(/from "@\/lib\/experience"/);
+    expect(previews).toMatch(/from "@\/lib\/section-icons"/);
+
+    for (const target of ["projects", "skills", "about", "experience", "education", "contact"]) {
+      expect(previews, `missing preview for ${target}`).toMatch(new RegExp(`${target}:`));
+    }
+  });
+
+  it("keeps previews out of the tab order and out of the a11y tree", () => {
+    // The card is already a button with its own label; nested links would be
+    // invalid HTML and the miniature text would double every word.
+    const previews = read("components/tile-previews.tsx");
+    expect(previews).toMatch(/aria-hidden="true"/);
+    expect(previews).toMatch(/pointer-events-none/);
+    expect(previews).not.toMatch(/<a\s/);
+    expect(previews).not.toMatch(/<button/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Every section is framed as a desktop window.                        */
+/* ------------------------------------------------------------------ */
+describe("section windows", () => {
+  it("wraps each section in SectionWindow", () => {
+    const files = [
+      "components/projects.tsx",
+      "components/skills.tsx",
+      "components/about.tsx",
+      "components/experience.tsx",
+      "components/education.tsx",
+      "components/footer.tsx",
+    ];
+    for (const f of files) {
+      expect(read(f), `${f} must use SectionWindow`).toMatch(/<SectionWindow/);
+    }
+  });
+
+  it("gives every window a title and keeps the anchor id on the section", () => {
+    // The id must stay on the <section>, not move onto the window chrome,
+    // or the nav links and scroll-padding break.
+    const src = read("components/section-window.tsx");
+    expect(src).toMatch(/title: string/);
+    // The wrapper itself must not own an id.
+    expect(src).not.toMatch(/id=\{/);
+  });
+
+  it("hides the traffic lights from assistive tech", () => {
+    expect(read("components/section-window.tsx")).toMatch(/aria-hidden="true"/);
+  });
 });
 
 /* ------------------------------------------------------------------ */

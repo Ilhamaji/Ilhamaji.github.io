@@ -3,6 +3,7 @@
 import { Mail, MapPin } from "lucide-react";
 import { GlassButton } from "@/components/glass/ui";
 import { Reveal } from "@/components/reveal";
+import { SectionWindow } from "@/components/section-window";
 import { GithubIcon, LinkedinIcon } from "@/components/icons";
 
 const EMAIL = "ilhmsap@gmail.com";
@@ -24,7 +25,8 @@ export function Footer() {
     >
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+          <SectionWindow title="Contact" subtitle="Let's talk" accent="#c5221f">
+            <div className="grid gap-10 md:grid-cols-[1.1fr_0.9fr] md:items-center">
             <div>
               <h2
                 id="contact-heading"
@@ -71,9 +73,10 @@ export function Footer() {
             </div>
           </div>
 
-          <p className="mt-12 border-t border-separator pt-6 text-[13px] text-label-2">
-            © {new Date().getFullYear()} M. Ilham Aji Saputra
+          <p className="mt-8 border-t border-separator pt-5 text-[13px] text-label-2">
+            {"\u00A9"} {new Date().getFullYear()} M. Ilham Aji Saputra
           </p>
+          </SectionWindow>
         </Reveal>
       </div>
     </footer>

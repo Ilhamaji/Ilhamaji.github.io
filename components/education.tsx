@@ -3,6 +3,7 @@
 import { GraduationCap, Award, Calendar } from "lucide-react";
 import { GlassCard, SectionHead } from "@/components/glass/ui";
 import { Reveal } from "@/components/reveal";
+import { SectionWindow } from "@/components/section-window";
 
 const EDUCATION = [
   {
@@ -48,14 +49,14 @@ export function EducationSection() {
     <section id="education" className="px-6 py-16 md:py-20" aria-labelledby="education-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <SectionHead
-            id="education-heading"
-            eyebrow="Academic background"
-            title="Education"
-          />
-        </Reveal>
+          <SectionWindow title="Education" subtitle="Academic background" accent="#0b8a9b">
+            <SectionHead
+              id="education-heading"
+              eyebrow="Academic background"
+              title="Education"
+            />
 
-        <div className="mt-10 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+            <div className="mt-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div className="space-y-4">
             {EDUCATION.map((item, i) => (
               <Reveal key={item.degree} delay={i * 0.05}>
@@ -109,6 +110,8 @@ export function EducationSection() {
             ))}
           </div>
         </div>
+          </SectionWindow>
+        </Reveal>
       </div>
     </section>
   );

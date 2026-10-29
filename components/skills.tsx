@@ -2,6 +2,7 @@
 
 import { SectionHead } from "@/components/glass/ui";
 import { Reveal } from "@/components/reveal";
+import { SectionWindow } from "@/components/section-window";
 import { SECTION_ICONS, STACK } from "@/lib/section-icons";
 
 function StackTile({ name }: { name: string }) {
@@ -37,20 +38,20 @@ export function Skills() {
     <section id="skills" className="px-6 py-16 md:py-20" aria-labelledby="skills-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <SectionHead id="skills-heading" eyebrow="Tools I reach for" title="Skills" />
-        </Reveal>
+          <SectionWindow title="Skills" subtitle="Tools I reach for" accent="#7c3aed">
+            <SectionHead id="skills-heading" eyebrow="Tools I reach for" title="Skills" />
 
-        <Reveal delay={0.08}>
-          {/* Mobile: a snap rail. Desktop: a wrapped grid. Two layouts, not one
-              squeezed. */}
-          <ul
-            className="no-scrollbar mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible"
-            aria-label="Technology stack"
-          >
-            {STACK.map((name) => (
-              <StackTile key={name} name={name} />
-            ))}
-          </ul>
+            {/* Mobile: a snap rail. Desktop: a wrapped grid. Two layouts, not
+                one squeezed. */}
+            <ul
+              className="no-scrollbar mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible"
+              aria-label="Technology stack"
+            >
+              {STACK.map((name) => (
+                <StackTile key={name} name={name} />
+              ))}
+            </ul>
+          </SectionWindow>
         </Reveal>
       </div>
     </section>
