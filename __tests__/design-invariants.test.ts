@@ -470,6 +470,45 @@ describe("navbar active indicator", () => {
 });
 
 /* ------------------------------------------------------------------ */
+/* GitHub Pages deployment.                                           */
+/* ------------------------------------------------------------------ */
+describe("github pages deployment", () => {
+  it("publishes the build artifact, not the repo root", () => {
+    // The site went 404 because Pages was switched to "deploy from a branch"
+    // and served the repo root, which has no index.html. The workflow must
+    // keep uploading ./out via actions/deploy-pages.
+    const wf = read(".github/workflows/deploy.yml");
+    expect(wf).toMatch(/actions\/upload-pages-artifact/);
+    expect(wf).toMatch(/path:\s*\.\/out/);
+    expect(wf).toMatch(/actions\/deploy-pages/);
+  });
+
+  it("does not ship a Jekyll config that legitimises branch deploys", () => {
+    // _config.yml existed only so the legacy branch-based Jekyll build could
+    // publish the repo root. With Pages in Actions mode it is dead weight and
+    // it invites the exact misconfiguration that caused the 404.
+    expect(existsSync(path.join(root, "_config.yml"))).toBe(false);
+  });
+
+  it("keeps a .nojekyll marker in the export", () => {
+    // Belt and braces: if the artifact path ever changes, do not let Jekyll
+    // strip directories that start with an underscore (_next).
+    expect(read("public/.nojekyll")).not.toBeUndefined();
+  });
+
+  it("runs the tests before deploying", () => {
+    const wf = read(".github/workflows/deploy.yml");
+    // Match the run step, not any mention: the string "next build" also
+    // appears in a comment above the Node setup step.
+    const testStep = wf.indexOf("run: npm test");
+    const buildStep = wf.indexOf("run: npx next build");
+    expect(testStep, "deploy.yml must run npm test").toBeGreaterThan(-1);
+    expect(buildStep, "deploy.yml must run the build").toBeGreaterThan(-1);
+    expect(testStep).toBeLessThan(buildStep);
+  });
+});
+
+/* ------------------------------------------------------------------ */
 /* GitHub Pages runs a legacy Jekyll build over the repo.             */
 /* ------------------------------------------------------------------ */
 describe("github pages / jekyll safety", () => {

@@ -53,6 +53,13 @@ computed ratios in `__tests__/design-invariants.test.ts` — not eyeballed.
 Pushes to `master` run `.github/workflows/deploy.yml`: install, test, build,
 and publish `out/` to GitHub Pages.
 
+**Pages must stay in "GitHub Actions" mode.** The repo once went 404 because
+Pages was switched to "Deploy from a branch" (`master`, `/`): that serves the
+repo root, which has no `index.html`, so every path 404s while `/package.json`
+still resolves. If the site 404s again, check
+`Settings → Pages → Build and deployment → Source` first. `_config.yml` was
+removed because it existed only to make that branch-based build work.
+
 ## Notes
 
 - There is intentionally **no preloader**. A previous one deadlocked on screen;
