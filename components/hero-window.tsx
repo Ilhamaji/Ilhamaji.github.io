@@ -93,7 +93,7 @@ function Tile({
  * kind of thing that makes an otherwise smooth page feel janky.
  */
 export function HeroWindow() {
-  const { zoomTo, zooming } = useZoomToSection();
+  const { zoomTo, zooming, ZOOM_MS, FADE_MS } = useZoomToSection();
   const reduce = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -198,7 +198,12 @@ export function HeroWindow() {
       {/*
         The zoom layer. `fixed` so it is immune to the window's tilt and to any
         ancestor transform, and pointer-events-none so it never traps a click
-        during the 420ms handover.
+        during the handover.
+
+        It renders the destination's own title, which is what bridges the two
+        animations: the card grows, the section name appears on it, and only
+        then does the page scroll underneath. Without the title the handover
+        looks like a flash rather than a move into the section.
       */}
       <AnimatePresence>
         {zooming && (
@@ -206,11 +211,12 @@ export function HeroWindow() {
             aria-hidden="true"
             className="pointer-events-none fixed inset-0 z-[80]"
             initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.26 } }}
+            animate={{ opacity: zooming.phase === "fade" ? 0 : 1 }}
+            transition={{ duration: FADE_MS / 1000, ease: "easeInOut" }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
           >
             <motion.div
-              className="absolute rounded-[14px] border border-separator"
+              className="absolute flex items-center justify-center overflow-hidden rounded-[14px] border border-separator"
               style={{
                 top: zooming.rect.top,
                 left: zooming.rect.left,
@@ -220,16 +226,41 @@ export function HeroWindow() {
                 // gradient backgrounds. Low alpha keeps it a wash.
                 background: `${zooming.accent}1a`,
               }}
-              initial={{ scale: 1, opacity: 0.9, borderRadius: 14 }}
+              initial={{ scale: 1, borderRadius: 14 }}
               animate={{
                 // Fill the viewport: the scale factor is the larger of the two
                 // ratios so the tile covers the screen on both axes.
                 scale: zooming.scale,
-                opacity: 1,
                 borderRadius: 0,
               }}
-              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-            />
+              transition={{ duration: ZOOM_MS / 1000, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="flex flex-col items-center gap-2 text-center">
+                <motion.span
+                  className="h-2.5 w-2.5 rounded-full"
+                  style={{ background: zooming.accent }}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.18, duration: 0.3, ease: "easeOut" }}
+                />
+                <motion.span
+                  className="px-4 text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-[-0.02em] text-label"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.24, duration: 0.34, ease: "easeOut" }}
+                >
+                  {zooming.label}
+                </motion.span>
+                <motion.span
+                  className="text-[13px] text-label-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.32, duration: 0.3 }}
+                >
+                  {zooming.meta}
+                </motion.span>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -336,7 +336,6 @@ describe("page structure", () => {
     for (const c of [
       "Navbar",
       "Hero",
-      "Spotlight",
       "Projects",
       "Skills",
       "About",
@@ -507,6 +506,40 @@ describe("hero window", () => {
     expect(zoomIdx).toBeGreaterThan(-1);
     expect(timeoutIdx).toBeGreaterThan(zoomIdx);
     expect(scrollIdx).toBeGreaterThan(timeoutIdx);
+  });
+
+  it("runs three distinct phases, not one cut-off scale", () => {
+    // zoom -> hold (title on screen) -> fade over the already-scrolled page.
+    // A single scale-up interrupted by a scroll is what looked unfinished.
+    const src = tiles();
+    expect(src).toMatch(/phase: "zoom"/);
+    expect(src).toMatch(/phase: "hold"/);
+    expect(src).toMatch(/phase: "fade"/);
+    expect(src).toMatch(/ZOOM_MS/);
+    expect(src).toMatch(/HOLD_MS/);
+    expect(src).toMatch(/FADE_MS/);
+  });
+
+  it("shows the destination title during the transition", () => {
+    // The title is the bridge between the two animations.
+    const src = read("components/hero-window.tsx");
+    expect(src).toMatch(/\{zooming\.label\}/);
+  });
+
+  it("cancels a scroll already in flight on a second click", () => {
+    // Two smooth scrolls racing stop at whichever loses, stranding the
+    // visitor between sections.
+    expect(tiles()).toMatch(/window\.scrollTo\(\{ top: window\.scrollY, behavior: "instant" \}\)/);
+  });
+
+  it("restarts cleanly when a second tile is clicked mid-flight", () => {
+    // clearTimers() at the top of zoomTo is what prevents a stranded overlay.
+    const src = tiles();
+    const zoomBody = src.slice(src.indexOf("const zoomTo = useCallback("));
+    const clearIdx = zoomBody.indexOf("clearTimers();");
+    const setIdx = zoomBody.indexOf("setZooming(");
+    expect(clearIdx).toBeGreaterThan(-1);
+    expect(clearIdx).toBeLessThan(setIdx);
   });
 
   it("skips the zoom when reduced motion is requested", () => {

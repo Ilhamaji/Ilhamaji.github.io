@@ -45,7 +45,7 @@ function TechMark({ name }: { name: string }) {
 
 export function Projects() {
   return (
-    <section id="projects" className="px-6 py-16 md:py-20" aria-labelledby="projects-heading">
+    <section id="projects" className="px-6 py-14 md:py-16" aria-labelledby="projects-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow

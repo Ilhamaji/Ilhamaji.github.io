@@ -25,9 +25,9 @@ const NAV = [
  * to be on screen while Experience still is too, so no entry arrived for
  * Experience and the underline stayed on About.
  *
- * The menu is not every section either: `spotlight` and `education` sit between
- * nav targets, so a plain id match would leave no link marked while they fill
- * the sticky header's band.
+ * The menu is not every section either: `education` sits between nav targets,
+ * so a plain id match would leave no link marked while it fills the sticky
+ * header's band.
  */
 const ACTIVE_BAND = 0.3;
 

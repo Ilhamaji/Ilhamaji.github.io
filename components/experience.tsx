@@ -8,7 +8,7 @@ import { EXPERIENCES } from "@/lib/experience";
 
 export function ExperienceSection() {
   return (
-    <section id="experience" className="px-6 py-16 md:py-20" aria-labelledby="experience-heading">
+    <section id="experience" className="px-6 py-14 md:py-16" aria-labelledby="experience-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="Experience" subtitle="Where I've worked" accent="#e8710a">

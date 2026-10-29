@@ -20,7 +20,7 @@ export function Footer() {
   return (
     <footer
       id="contact"
-      className="mt-auto border-t border-separator px-6 py-16 md:py-20"
+      className="mt-auto px-6 py-14 md:py-16"
       aria-labelledby="contact-heading"
     >
       <div className="mx-auto max-w-5xl">

@@ -35,7 +35,7 @@ function StackTile({ name }: { name: string }) {
 
 export function Skills() {
   return (
-    <section id="skills" className="px-6 py-16 md:py-20" aria-labelledby="skills-heading">
+    <section id="skills" className="px-6 py-14 md:py-16" aria-labelledby="skills-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="Skills" subtitle="Tools I reach for" accent="#7c3aed">

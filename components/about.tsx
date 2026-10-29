@@ -15,7 +15,7 @@ const FACTS = [
 
 export function About() {
   return (
-    <section id="about" className="px-6 py-16 md:py-20" aria-labelledby="about-heading">
+    <section id="about" className="px-6 py-14 md:py-16" aria-labelledby="about-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="About" subtitle="A little context" accent="#0f9d58">

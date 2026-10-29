@@ -46,7 +46,7 @@ const IconPlate = ({ children }: { children: React.ReactNode }) => (
 
 export function EducationSection() {
   return (
-    <section id="education" className="px-6 py-16 md:py-20" aria-labelledby="education-heading">
+    <section id="education" className="px-6 py-14 md:py-16" aria-labelledby="education-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="Education" subtitle="Academic background" accent="#0b8a9b">
