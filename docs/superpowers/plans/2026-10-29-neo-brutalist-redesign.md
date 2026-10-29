@@ -159,7 +159,7 @@ BrutalButton({ href, children, variant?: "lime" | "purple" | "ghost", size?: "md
 
 BrutalCard({ children, tilt?: number, className })
   bg-ink-2 border-3 border-cream/15 rounded-2xl
-  style={{ transform: `rotate(${tilt}deg)` }} when tilt given
+  style={ { transform: `rotate(${tilt}deg)` } } when tilt given
 
 SectionHead({ eyebrow, title, accent, className })
   eyebrow: font-hand text-lime text-xl

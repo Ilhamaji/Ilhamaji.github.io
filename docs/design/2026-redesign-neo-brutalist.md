@@ -11,7 +11,7 @@ The current site reads as "AI slop". Three concrete causes, not a matter of tast
 1. `blur-[120px]` glow orbs (contact section). The most recognizable AI-generated
    signature. The reference image contains **zero** glows.
 2. One motion recipe copy-pasted into every section:
-   `initial={{opacity:0,y:20}}` + `duration:0.6` + `ease:[0.22,1,0.36,1]`.
+   `initial={ {opacity:0,y:20} }` + `duration:0.6` + `ease:[0.22,1,0.36,1]`.
    Everything fades up identically, so nothing has hierarchy.
 3. No identity: `rounded-[3rem]`, `border-border/50`, `bg-muted/10`, Geist,
    `text-accent/10` chips. Correct, safe, anonymous.

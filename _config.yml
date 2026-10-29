@@ -1,0 +1,30 @@
+# GitHub Pages runs a legacy Jekyll build in parallel with the real Next.js
+# workflow in .github/workflows/deploy.yml. That Jekyll job renders every
+# markdown file in the repo through Liquid, and the design docs contain React
+# and CSS snippets such as {{opacity:0,y:20}} and `rotate(${tilt}deg)` that
+# Liquid cannot parse. It is not what publishes the site, but it fails on every
+# push and hides real problems in the Actions tab.
+#
+# Excluding the prose directories keeps that legacy job green without touching
+# the Next.js build, which ships ./out untouched.
+
+exclude:
+  - docs/
+  - README.md
+  - AGENTS.md
+  - CLAUDE.md
+  - GEMINI.md
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - SECURITY.md
+  - ROADMAP.md
+  - GUIDE.md
+  - antislop.md
+  - node_modules/
+  - .next/
+  - out/
+  - __tests__/
+  - components/
+  - lib/
+  - app/
+  - scripts/

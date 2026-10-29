@@ -270,3 +270,40 @@ describe("tech icon legibility", () => {
     expect(src).toMatch(/h-9 w-9/);
   });
 });
+
+/* ------------------------------------------------------------------ */
+/* GitHub Pages runs a legacy Jekyll build over the repo.             */
+/* ------------------------------------------------------------------ */
+describe("github pages / jekyll safety", () => {
+  it("markdown files contain no Liquid delimiters", () => {
+    // Jekyll renders every .md through Liquid. A React snippet like
+    // {{opacity:0,y:20}} crashes the build with a syntax error, which is
+    // exactly what happened on the redesign commit.
+    const md = walk(".").filter(
+      (f) =>
+        f.endsWith(".md") &&
+        !f.includes("node_modules") &&
+        !f.startsWith("out") &&
+        !f.startsWith(".next")
+    );
+    expect(md.length).toBeGreaterThan(0);
+
+    for (const file of md) {
+      const src = read(file);
+      expect(src.includes("{{"), `${file} contains '{{'`).toBe(false);
+      expect(src.includes("{%"), `${file} contains '{%'`).toBe(false);
+    }
+  });
+
+  it("excludes prose directories from the legacy Jekyll build", () => {
+    const cfg = read("_config.yml");
+    expect(cfg).toMatch(/exclude:/);
+    expect(cfg).toMatch(/docs\//);
+  });
+
+  it("ships .nojekyll so Pages does not strip _next", () => {
+    // Without this, Jekyll drops directories starting with an underscore and
+    // every asset under /_next/ 404s.
+    expect(existsSync(path.join(root, "public/.nojekyll"))).toBe(true);
+  });
+});
