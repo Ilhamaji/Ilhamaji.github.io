@@ -1,9 +1,8 @@
 "use client";
 
 import { GraduationCap, Award, Calendar } from "lucide-react";
-import { SectionHead } from "@/components/brutal/ui";
-import { Reveal } from "@/components/brutal/reveal";
-import { Starburst } from "@/components/brutal/doodles";
+import { GlassCard, SectionHead } from "@/components/glass/ui";
+import { Reveal } from "@/components/reveal";
 
 const EDUCATION = [
   {
@@ -36,64 +35,76 @@ const CERTIFICATIONS = [
   },
 ];
 
+/* A small icon plate; the tint is the accent at low opacity so it reads as
+   secondary in both themes without a second color token. */
+const IconPlate = ({ children }: { children: React.ReactNode }) => (
+  <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-accent/10 text-accent">
+    {children}
+  </span>
+);
+
 export function EducationSection() {
   return (
-    <section id="education" className="px-6 py-20" aria-labelledby="education-heading">
-      <div className="mx-auto max-w-6xl">
+    <section id="education" className="px-6 py-16 md:py-20" aria-labelledby="education-heading">
+      <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionHead
+            id="education-heading"
             eyebrow="Academic background"
             title="Education"
-            accent={<Starburst className="h-6 w-6 text-orange" />}
           />
         </Reveal>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div className="mt-10 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div className="space-y-4">
             {EDUCATION.map((item, i) => (
               <Reveal key={item.degree} delay={i * 0.05}>
-                <article className="rounded-2xl border-3 border-cream/15 bg-ink-2 p-5">
+                <GlassCard as="article" className="p-6">
                   <div className="flex items-start gap-3">
-                    <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border-3 border-lime/40 text-lime">
+                    <IconPlate>
                       <GraduationCap className="h-4 w-4" aria-hidden="true" />
-                    </span>
+                    </IconPlate>
                     <div>
-                      <h3 className="text-base leading-tight text-cream">
+                      <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
                         {item.degree}
                       </h3>
-                      <p className="mt-0.5 text-sm text-purple">{item.institution}</p>
-                      <p className="mt-1 inline-flex items-center gap-1 text-xs text-muted">
+                      <p className="mt-1 text-[15px] text-accent">{item.institution}</p>
+                      <p className="mt-1 inline-flex items-center gap-1 text-[13px] tabular-nums text-label-2">
                         <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                         {item.period} · {item.location}
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-cream/85">
+                      <p className="mt-2 text-[15px] leading-relaxed text-label-2">
                         {item.details}
                       </p>
                     </div>
                   </div>
-                </article>
+                </GlassCard>
               </Reveal>
             ))}
           </div>
 
           <div className="space-y-4">
             {CERTIFICATIONS.map((c) => (
-              <Reveal key={c.title} delay={0.1}>
-                <article className="h-full rounded-2xl border-3 border-lime/40 bg-ink-2 p-5">
+              <Reveal key={c.title} delay={0.1} className="h-full">
+                <GlassCard as="article" className="h-full p-6">
                   <div className="flex items-start gap-3">
-                    <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border-3 border-lime bg-lime text-ink">
+                    <IconPlate>
                       <Award className="h-4 w-4" aria-hidden="true" />
-                    </span>
+                    </IconPlate>
                     <div>
-                      <h3 className="text-base leading-tight text-cream">{c.title}</h3>
-                      <p className="mt-0.5 text-xs text-muted">{c.issuer}</p>
-                      <p className="mt-1 text-xs text-lime">{c.period}</p>
-                      <p className="mt-2 text-sm leading-relaxed text-cream/85">
+                      <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
+                        {c.title}
+                      </h3>
+                      <p className="mt-1 text-[13px] text-label-2">{c.issuer}</p>
+                      <p className="mt-1 text-[13px] tabular-nums text-accent">
+                        {c.period}
+                      </p>
+                      <p className="mt-2 text-[15px] leading-relaxed text-label-2">
                         {c.description}
                       </p>
                     </div>
                   </div>
-                </article>
+                </GlassCard>
               </Reveal>
             ))}
           </div>

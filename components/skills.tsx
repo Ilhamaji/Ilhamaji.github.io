@@ -1,8 +1,7 @@
 "use client";
 
-import { SectionHead } from "@/components/brutal/ui";
-import { Reveal } from "@/components/brutal/reveal";
-import { Dots } from "@/components/brutal/doodles";
+import { SectionHead } from "@/components/glass/ui";
+import { Reveal } from "@/components/reveal";
 import { SECTION_ICONS, STACK } from "@/lib/section-icons";
 
 function StackTile({ name }: { name: string }) {
@@ -11,21 +10,21 @@ function StackTile({ name }: { name: string }) {
   return (
     <li className="snap-center">
       <div
-        className="group flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-2xl border-3 border-ink bg-cream transition-transform duration-150 hover:-translate-y-1"
+        className="flex h-[104px] w-[104px] flex-col items-center justify-center gap-2 rounded-[var(--radius-sm)] border border-separator bg-surface/70 p-2 backdrop-blur-xl backdrop-saturate-150 transition-colors hover:bg-surface"
         title={entry?.label ?? name}
       >
         {entry ? (
-          // Brand color on a light tile; the hue is the brand, the lightness is
-          // tuned for 3:1 (see lib/section-icons.tsx).
-          <entry.Icon className="h-9 w-9" style={{ color: entry.color }} />
+          // Brand color on a light surface; the hue is the brand, the lightness
+          // is tuned for 3:1 (see lib/section-icons.tsx).
+          <entry.Icon className="h-8 w-8" style={{ color: entry.color }} />
         ) : (
           // No brand mark exists for this entry (e.g. Git): a readable text
           // badge beats a blank square or a wrong logo.
-          <span className="font-display text-2xl leading-none text-ink">
+          <span className="text-xl font-semibold leading-none text-label-2">
             {name.slice(0, 2)}
           </span>
         )}
-        <span className="max-w-full px-1 text-center text-[11px] font-medium leading-tight text-ink">
+        <span className="max-w-full px-1 text-center text-[11px] font-medium leading-tight text-label-2">
           {entry?.label ?? name}
         </span>
       </div>
@@ -35,16 +34,10 @@ function StackTile({ name }: { name: string }) {
 
 export function Skills() {
   return (
-    <section id="skills" className="px-6 py-20" aria-labelledby="skills-heading">
-      <div className="mx-auto max-w-6xl">
+    <section id="skills" className="px-6 py-16 md:py-20" aria-labelledby="skills-heading">
+      <div className="mx-auto max-w-5xl">
         <Reveal>
-          <div className="flex items-end justify-between gap-4">
-            <SectionHead
-              eyebrow="Tools I reach for"
-              title="Skills"
-              accent={<Dots className="h-6 w-6 text-purple" />}
-            />
-          </div>
+          <SectionHead id="skills-heading" eyebrow="Tools I reach for" title="Skills" />
         </Reveal>
 
         <Reveal delay={0.08}>

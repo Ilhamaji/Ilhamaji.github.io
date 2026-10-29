@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { BrutalButton } from "@/components/brutal/ui";
-import { Underline } from "@/components/brutal/doodles";
+import { GlassButton } from "@/components/glass/ui";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -163,19 +163,19 @@ export function Navbar() {
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b-3 border-cream/10 bg-ink/90 backdrop-blur-sm">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-separator bg-bg/70 backdrop-blur-xl backdrop-saturate-150">
       <nav
         aria-label="Main"
-        className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6"
+        className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6"
       >
         <a
           href="#top"
           onClick={(e) => goTo("top", e)}
-          className="font-display text-xl tracking-wide text-cream"
+          className="text-[17px] font-semibold tracking-[-0.02em] text-label"
           aria-label="M. Ilham Aji Saputra — back to top"
         >
-          ILHAM
-          <span className="text-lime">.</span>
+          Ilham
+          <span className="text-accent">.</span>
         </a>
 
         <ul className="hidden items-center gap-1 md:flex">
@@ -188,49 +188,42 @@ export function Navbar() {
                   onClick={(e) => goTo(item.id, e)}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "group relative inline-flex min-h-[44px] items-center px-3 text-sm transition-colors duration-200",
-                    isActive ? "text-cream" : "text-muted hover:text-cream"
+                    "group relative inline-flex min-h-[44px] items-center px-3 text-[15px] transition-colors duration-200",
+                    isActive ? "text-label" : "text-label-2 hover:text-label"
                   )}
                 >
                   {item.label}
 
                   {/*
-                    Every item carries its own underline; only the active one is
+                    Every item carries its own indicator; only the active one is
                     visible. Keeping it mounted is what makes the transition
-                    possible: a node that appears only when active has nothing to
-                    animate from, which is why the old version popped in and out.
+                    possible: a node that appears only when active has nothing
+                    to animate from.
 
-                    The svg needs an explicit w-full: Tailwind's inset-x-2 sizes
-                    an absolutely positioned element from both edges only when a
-                    width is present, otherwise it falls back to the SVG's
-                    intrinsic 300x18 box and overflows the link.
+                    The bar needs an explicit left/right so it spans the link;
+                    without both it collapses to its content width.
                   */}
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "pointer-events-none absolute bottom-2 left-2 right-2 h-2",
+                      "pointer-events-none absolute bottom-1 left-3 right-3 h-[2px] rounded-full bg-accent",
                       "origin-left transition-[opacity,scale] duration-300 ease-out",
                       isActive
                         ? "scale-x-100 opacity-100"
                         : "scale-x-0 opacity-0"
                     )}
-                  >
-                    <Underline className="h-full w-full text-lime" strokeWidth={7} />
-                  </span>
+                  />
                 </a>
               </li>
             );
           })}
         </ul>
 
-        <div className="hidden md:block">
-          <BrutalButton
-            href="#contact"
-            variant="lime"
-            onClick={(e) => goTo("contact", e)}
-          >
-            Hire Me
-          </BrutalButton>
+        <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
+          <GlassButton href="#contact" variant="primary" onClick={(e) => goTo("contact", e)}>
+            Hire me
+          </GlassButton>
         </div>
 
         <button
@@ -239,7 +232,7 @@ export function Navbar() {
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label="Open menu"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-3 border-cream/20 text-cream md:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-separator bg-surface-2 text-label md:hidden"
         >
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
@@ -251,30 +244,37 @@ export function Navbar() {
           ref={sheetRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Menu"
-          className="fixed inset-0 z-50 flex flex-col bg-ink px-6 pt-6 md:hidden"
+          aria-label="Site menu"
+          className="fixed inset-0 z-50 bg-bg px-6 py-4 md:hidden"
         >
           <div className="flex items-center justify-between">
-            <span className="font-display text-xl text-cream">
-              ILHAM<span className="text-lime">.</span>
+            <span className="text-[17px] font-semibold tracking-[-0.02em] text-label">
+              Ilham<span className="text-accent">.</span>
             </span>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-3 border-cream/20 text-cream"
-            >
-              <X className="h-5 w-5" aria-hidden="true" />
-            </button>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close menu"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-separator bg-surface-2 text-label"
+              >
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
           </div>
 
-          <ul className="mt-10 flex flex-col gap-1">
+          <ul className="mt-10 flex flex-col">
             {NAV.map((item) => (
-              <li key={item.id}>
+              <li key={item.id} className="border-b border-separator">
                 <a
                   href={`#${item.id}`}
                   onClick={(e) => goTo(item.id, e)}
-                  className="flex min-h-[52px] items-center font-display text-2xl text-cream"
+                  aria-current={active === item.id ? "page" : undefined}
+                  className={cn(
+                    "flex min-h-[56px] items-center text-[19px] font-medium",
+                    active === item.id ? "text-label" : "text-label-2"
+                  )}
                 >
                   {item.label}
                 </a>
@@ -283,13 +283,14 @@ export function Navbar() {
           </ul>
 
           <div className="mt-8">
-            <BrutalButton
+            <GlassButton
               href="#contact"
-              variant="lime"
+              variant="primary"
               onClick={(e) => goTo("contact", e)}
+              className="w-full"
             >
-              Hire Me
-            </BrutalButton>
+              Hire me
+            </GlassButton>
           </div>
         </div>
       )}

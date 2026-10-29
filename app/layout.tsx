@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Inter } from "next/font/google";
+import { ThemeScript } from "@/components/theme-script";
 import "./globals.css";
 
-const rubik = Rubik({
-  variable: "--font-rubik",
+/**
+ * Inter is a FALLBACK only. The body font stack in globals.css asks for the
+ * Apple system face first (SF Pro on Apple hardware, Segoe UI Variable on
+ * Windows via system-ui), so most visitors never download this. It exists so
+ * Linux and older Android render something deliberate instead of a serif.
+ */
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -38,7 +45,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#0D0D0D",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F2F2F7" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
 };
 
 export default function RootLayout({
@@ -47,10 +57,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${rubik.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-ink text-cream font-body">
-        {children}
-      </body>
+    // `suppressHydrationWarning` is required and scoped to <html>: ThemeScript
+    // writes data-theme before hydration, so the attribute legitimately differs
+    // from the server-rendered markup.
+    <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className="min-h-full flex flex-col bg-bg text-label">{children}</body>
     </html>
   );
 }

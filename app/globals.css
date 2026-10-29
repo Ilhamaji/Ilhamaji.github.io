@@ -1,69 +1,109 @@
 @import "tailwindcss";
-/* Only the latin subset of each display face is used by this site's copy.
-   Importing the full family would ship Cyrillic and Latin-Ext files nothing
-   references (~190KB of dead weight). */
-@import "@fontsource/permanent-marker/latin-400.css";
-@import "@fontsource/caveat/latin-600.css";
 
-@theme {
-  /* Palette. Contrast verified against --color-ink, not eyeballed.
-     ink/cream 17.77:1 · lime 14.84:1 · purple 5.46:1 · orange 6.93:1
-     sky 9.07:1 · muted 7.58:1
-     purple-deep is 3.41:1 — large display type and fills ONLY, never body text. */
-  --color-ink: #0d0d0d;
-  --color-ink-2: #161616;
-  --color-cream: #f5f5f0;
-  --color-lime: #c6f135;
-  --color-purple: #9370f7;
-  --color-purple-deep: #7c3aed;
-  --color-orange: #f97316;
-  --color-sky: #38bdf8;
-  --color-muted: #a1a1aa;
+/*
+  iOS 26 (Liquid Glass) design tokens.
 
-  --font-display: "Permanent Marker", cursive;
-  --font-hand: "Caveat", cursive;
-  --font-body: var(--font-rubik), ui-sans-serif, system-ui, sans-serif;
+  Light is the default on :root; the dark set overrides it under
+  [data-theme="dark"], which app/layout.tsx can set before first paint. Every
+  component writes ONE set of classes and lets these variables switch, so a
+  `dark:` variant anywhere in the app is a bug — `__tests__/design-invariants`
+  fails on one.
 
-  --shadow-brutal: 6px 6px 0 0 #0d0d0d;
-  --shadow-brutal-sm: 4px 4px 0 0 #0d0d0d;
-  --shadow-brutal-cream: 6px 6px 0 0 #f5f5f0;
+  Contrast is computed, not eyeballed. The rgba label values are composited
+  over their surface before being measured; see the design-invariants test.
+*/
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-label: var(--label);
+  --color-label-2: var(--label-2);
+  --color-label-3: var(--label-3);
+  --color-separator: var(--separator);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-label: var(--accent-label);
+
+  --radius-lg: 28px;
+  --radius-md: 20px;
+  --radius-sm: 14px;
+}
+
+/*
+  Two accent variables, deliberately.
+
+  A single blue cannot serve both jobs: white text on iOS system blue
+  (#007AFF) is 4.02:1 and highlighter-blue as body text on white is the same —
+  both below AA. So `--accent` is the TEXT accent, tuned to read against the
+  surface, and `--accent-fill` is the BUTTON background, tuned to carry white
+  label text. Every ratio below is asserted in design-invariants.test.ts.
+*/
+:root {
+  --bg: #f2f2f7;
+  --surface: #ffffff;
+  --surface-2: #f9f9fb;
+  --label: #000000;
+  --label-2: rgba(60, 60, 67, 0.76);
+  --label-3: rgba(60, 60, 67, 0.4);
+  --separator: rgba(60, 60, 67, 0.12);
+  --accent: #0066d6;
+  --accent-fill: #0066d6;
+  --accent-label: #ffffff;
+  --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.08);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --label: #ffffff;
+  --label-2: rgba(235, 235, 245, 0.6);
+  --label-3: rgba(235, 235, 245, 0.4);
+  --separator: rgba(255, 255, 255, 0.15);
+  --accent: #409cff;
+  --accent-fill: #0d6efd;
+  --accent-label: #ffffff;
+  --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: var(--color-ink);
+    background-color: var(--bg);
     /* The navbar is fixed and 64px tall. Without this every in-page jump parks
        the section top under the header, hiding its heading. */
     scroll-padding-top: 5rem;
   }
 
   body {
-    background-color: var(--color-ink);
-    color: var(--color-cream);
-    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--label);
+    font-family:
+      -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter),
+      ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   ::selection {
-    background-color: var(--color-lime);
-    color: var(--color-ink);
+    background-color: var(--accent);
+    color: var(--accent-label);
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-lime);
+    outline: 3px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
 
-  /* Headings default to the brush display face. Permanent Marker is
-     single-weight (400) — hierarchy comes from size and color, not weight. */
+  /* Headings inherit the body face. Hierarchy comes from size, weight and
+     tracking — never from a second display font. */
   h1,
   h2,
   h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: 0.01em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -81,13 +121,14 @@
   }
 }
 
-/* Hard 3px outlines — the structural signature of the design. */
-@utility brutal-border {
-  border: 3px solid var(--color-ink);
-}
-
-@utility brutal-border-cream {
-  border: 3px solid var(--color-cream);
+/*
+  Without backdrop-filter the translucent surface has nothing to blur and the
+  text behind it shows through, so fall back to an opaque surface.
+*/
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: var(--surface) !important;
+  }
 }
 
 /* Hide scrollbar on the mobile skills rail while keeping it scrollable. */

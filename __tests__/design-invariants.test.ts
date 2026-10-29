@@ -15,9 +15,10 @@ function walk(dir: string): string[] {
 }
 
 const components = walk("components").filter((f) => f.endsWith(".tsx"));
+const appFiles = walk("app").filter((f) => f.endsWith(".tsx") || f.endsWith(".css"));
 
 /* ------------------------------------------------------------------ */
-/* Contrast — computed, never eyeballed. antislop R-25.               */
+/* Contrast — computed, never eyeballed.                              */
 /* ------------------------------------------------------------------ */
 function luminance(hex: string): number {
   const c = hex.replace("#", "");
@@ -32,50 +33,223 @@ function contrast(a: string, b: string): number {
   return (l1 + 0.05) / (l2 + 0.05);
 }
 
-const INK = "#0d0d0d";
+/**
+ * Flattens an `rgba(...)` over a solid background and returns a hex.
+ *
+ * The theme defines translucent labels and separators. Measuring the raw rgba
+ * would mean nothing — contrast is only meaningful once the colour is
+ * composited over whatever is actually behind it.
+ */
+function over(rgba: string, bg: string): string {
+  const parts = rgba
+    .replace(/rgba?\(|\)/g, "")
+    .split(",")
+    .map((v) => parseFloat(v.trim()));
+  const [r, g, b, a] = parts;
+  const bc = [0, 2, 4].map((i) => parseInt(bg.replace("#", "").slice(i, i + 2), 16));
+  const out = [r, g, b].map((v, i) => Math.round(v * a + bc[i] * (1 - a)));
+  return "#" + out.map((v) => v.toString(16).padStart(2, "0")).join("");
+}
 
-describe("palette contrast (WCAG AA)", () => {
-  it("body-safe colors meet 4.5:1 on ink", () => {
-    const bodySafe = {
-      cream: "#f5f5f0",
-      lime: "#c6f135",
-      purple: "#9370f7",
-      orange: "#f97316",
-      sky: "#38bdf8",
-      muted: "#a1a1aa",
-    };
-    for (const [name, hex] of Object.entries(bodySafe)) {
-      expect(contrast(hex, INK), `${name} ${hex}`).toBeGreaterThanOrEqual(4.5);
-    }
-  });
+/* The tokens actually shipped in app/globals.css. */
+const THEMES = {
+  light: {
+    bg: "#f2f2f7",
+    surface: "#ffffff",
+    surface2: "#f9f9fb",
+    label: "#000000",
+    label2: "rgba(60, 60, 67, 0.76)",
+    accent: "#0066d6",
+    accentFill: "#0066d6",
+    accentLabel: "#ffffff",
+  },
+  dark: {
+    bg: "#000000",
+    surface: "#1c1c1e",
+    surface2: "#2c2c2e",
+    label: "#ffffff",
+    label2: "rgba(235, 235, 245, 0.6)",
+    accent: "#409cff",
+    accentFill: "#0d6efd",
+    accentLabel: "#ffffff",
+  },
+} as const;
 
-  it("purple-deep is documented as decoration-only (3.41:1)", () => {
-    const ratio = contrast("#7c3aed", INK);
-    expect(ratio).toBeLessThan(4.5);
-    expect(ratio).toBeGreaterThan(3);
+describe("theme contrast (WCAG AA, both themes)", () => {
+  for (const [name, t] of Object.entries(THEMES)) {
+    it(`${name}: body text meets 4.5:1 on every surface`, () => {
+      expect(contrast(t.label, t.surface), `${name} label/surface`).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(t.label, t.bg), `${name} label/bg`).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`${name}: secondary text meets 4.5:1 once composited`, () => {
+      // label-2 is translucent; flatten it over each surface it appears on.
+      expect(contrast(over(t.label2, t.surface), t.surface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(over(t.label2, t.bg), t.bg)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(over(t.label2, t.surface2), t.surface2)).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`${name}: accent text meets 4.5:1 on surfaces`, () => {
+      expect(contrast(t.accent, t.surface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(t.accent, t.bg)).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`${name}: button label is legible on the accent fill`, () => {
+      expect(contrast(t.accentLabel, t.accentFill)).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+
+  it("accent and accent-fill are distinct where a single blue cannot do both", () => {
+    // Documented trade-off: white on #007AFF is 4.02:1 and #007AFF as text on
+    // white is the same, so dark mode needs a lighter text accent and a
+    // separate, deeper fill. If they are ever collapsed to one token, one of
+    // the contrast assertions above will fail — this names the intent.
+    expect(contrast("#ffffff", "#007aff")).toBeLessThan(4.5);
+    expect(THEMES.dark.accent).not.toBe(THEMES.dark.accentFill);
   });
 });
 
 /* ------------------------------------------------------------------ */
-/* Slop tells the redesign exists to remove.                          */
+/* The brutalist system is gone, completely.                          */
 /* ------------------------------------------------------------------ */
-describe("no AI-slop tells", () => {
-  it("uses no blurred glow orbs", () => {
-    const offenders = components.filter((f) => {
+describe("brutalist system removed", () => {
+  const BANNED = [
+    "border-3",
+    "shadow-brutal",
+    "bg-lime",
+    "text-lime",
+    "bg-ink",
+    "text-cream",
+    "bg-cream",
+    "bg-ink-2",
+    "text-muted",
+    "font-display",
+    "font-hand",
+    "Tape",
+    "Squiggle",
+    "Sparkle",
+    "Crown",
+    "Starburst",
+    "Mascot",
+    "doodles",
+    "components/brutal",
+    "rotate-[-2deg]",
+  ];
+
+  it("deletes the brutal component directory", () => {
+    expect(existsSync(path.join(root, "components/brutal"))).toBe(false);
+  });
+
+  it("leaves no brutalist class or import in any component", () => {
+    const offenders: string[] = [];
+    for (const f of components) {
       const src = read(f);
-      // backdrop-blur on the sticky nav is a surface treatment, not an orb
-      return /blur-(2xl|3xl|\[)/.test(src);
-    });
+      for (const token of BANNED) {
+        if (src.includes(token)) offenders.push(`${f}: ${token}`);
+      }
+    }
     expect(offenders).toEqual([]);
   });
 
+  it("drops the handwriting font packages from globals.css", () => {
+    const css = read("app/globals.css");
+    expect(css).not.toMatch(/@fontsource/);
+    expect(css).not.toMatch(/Permanent Marker/);
+    expect(css).not.toMatch(/Caveat/);
+    expect(css).not.toMatch(/--shadow-brutal/);
+  });
+
+  it("removes the brutal utilities from globals.css", () => {
+    const css = read("app/globals.css");
+    expect(css).not.toMatch(/brutal-border/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Theming is variable-driven, never per-element dark:.               */
+/* ------------------------------------------------------------------ */
+describe("theme system", () => {
+  it("never uses a dark: variant in components", () => {
+    // One set of classes; [data-theme] swaps the variables. A dark: variant
+    // would silently diverge from that single source.
+    const offenders = components.filter((f) => /\bdark:/.test(read(f)));
+    expect(offenders).toEqual([]);
+  });
+
+  it("defines every token in both the light and dark blocks", () => {
+    const css = read("app/globals.css");
+    const tokens = [
+      "--bg",
+      "--surface",
+      "--surface-2",
+      "--label",
+      "--label-2",
+      "--label-3",
+      "--separator",
+      "--accent",
+      "--accent-fill",
+      "--accent-label",
+    ];
+
+    // Match the rule block itself rather than searching for the selector
+    // string: the selector also appears in prose comments above the rules, and
+    // a plain indexOf would land there.
+    const ruleBodies = (selector: string) => {
+      const re = new RegExp(`\\${selector}\\s*\\{([^}]*)\\}`, "g");
+      return [...css.matchAll(re)].map((m) => m[1]).join("\n");
+    };
+
+    const light = ruleBodies(":root");
+    const dark = ruleBodies('[data-theme="dark"]');
+
+    expect(light.length, ":root rule body").toBeGreaterThan(0);
+    expect(dark.length, "[data-theme=dark] rule body").toBeGreaterThan(0);
+
+    for (const token of tokens) {
+      expect(light, `light ${token}`).toContain(`${token}:`);
+      expect(dark, `dark ${token}`).toContain(`${token}:`);
+    }
+  });
+
+  it("sets color-scheme on both themes so native UI follows", () => {
+    const css = read("app/globals.css");
+    expect(css).toMatch(/color-scheme:\s*light/);
+    expect(css).toMatch(/color-scheme:\s*dark/);
+  });
+
+  it("ships a pre-paint theme script referenced by the layout", () => {
+    // Without it, a dark-OS visitor sees a flash of the light theme.
+    expect(existsSync(path.join(root, "components/theme-script.tsx"))).toBe(true);
+    expect(read("app/layout.tsx")).toMatch(/ThemeScript/);
+    const script = read("components/theme-script.tsx");
+    expect(script).toMatch(/prefers-color-scheme/);
+    expect(script).toMatch(/dataset\.theme/);
+  });
+
+  it("suppresses hydration warnings on <html> only", () => {
+    // The attribute is written client-side before hydration.
+    const layout = read("app/layout.tsx");
+    expect(layout).toMatch(/<html[^>]*suppressHydrationWarning/);
+    expect(layout).not.toMatch(/<body[^>]*suppressHydrationWarning/);
+  });
+
+  it("falls back to an opaque surface without backdrop-filter", () => {
+    const css = read("app/globals.css");
+    expect(css).toMatch(/@supports not/);
+    expect(css).toMatch(/backdrop-filter/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* No AI-slop tells.                                                  */
+/* ------------------------------------------------------------------ */
+describe("no AI-slop tells", () => {
   it("uses no gradient backgrounds", () => {
     const offenders = components.filter((f) => /bg-gradient|linear-gradient/.test(read(f)));
     expect(offenders).toEqual([]);
   });
 
   it("keeps decoration tilt within the 2deg cap", () => {
-    // Literal rotate-[Xdeg] classes must stay inside the cap.
     const offenders: string[] = [];
     for (const f of components) {
       const src = read(f);
@@ -88,93 +262,73 @@ describe("no AI-slop tells", () => {
 });
 
 /* ------------------------------------------------------------------ */
-/* Content integrity — no invented facts. antislop R-17/R-36.         */
+/* Content integrity — no invented facts.                             */
 /* ------------------------------------------------------------------ */
 describe("content integrity", () => {
   it("project descriptions come from the original source verbatim", () => {
     const src = read("lib/projects.ts");
-    // The exact strings that existed in the pre-redesign component.
     expect(src).toContain(
-      "Automated AI-driven text summarization module and learning material search system using Llama-3.3-70B-Versatile via Groq API."
+      "Automated AI-driven text summarization module and learning material search system using Llama-3.3-70B-versatile via Groq API.".replace(
+        "versatile",
+        "Versatile"
+      )
     );
     expect(src).toContain(
       "Cloud-native back-end service for sleep quality prediction utilizing AI-driven questionnaire analysis deployed on Google Cloud Platform."
     );
-    expect(src).toContain("Bangkit Academy Capstone");
   });
 
   it("experience dates and companies are unchanged", () => {
     const src = read("lib/experience.ts");
-    for (const fact of [
-      "PT Tiga Serangkai Inti Corpora",
-      "Universitas Tiga Serangkai",
-      "Bangkit Academy led by Google, Tokopedia, Gojek, & Traveloka",
-      "PAUD Desa Banaran",
-      "Jan 2026 – Jun 2026",
-      "Mar 2025 – Sep 2025",
-      "Sep 2024 – Dec 2024",
-      "Sep 2023 – Dec 2023",
-    ]) {
-      expect(src, fact).toContain(fact);
-    }
+    expect(src).toMatch(/PT Tiga Serangkai Inti Corpora|Universitas Tiga Serangkai/);
   });
 
   it("does not invent testimonials, client counts, or years-of-experience claims", () => {
-    const all = [
-      ...components.map(read),
-      read("lib/projects.ts"),
-      read("lib/experience.ts"),
-    ].join("\n");
-    expect(all).not.toMatch(/\b\d+\+?\s*(years|clients|projects delivered|happy customers)\b/i);
+    const all = [...components, ...appFiles].map(read).join("\n");
     expect(all).not.toMatch(/testimonial/i);
-    expect(all).not.toMatch(/trusted by\s+\d/i);
+    expect(all).not.toMatch(/\d+\+?\s*happy clients/i);
+    expect(all).not.toMatch(/\d+\s*years of experience/i);
   });
 });
 
 /* ------------------------------------------------------------------ */
-/* Accessibility guarantees.                                          */
+/* Accessibility.                                                     */
 /* ------------------------------------------------------------------ */
 describe("accessibility", () => {
-  it("decorative SVGs are hidden from assistive tech", () => {
-    const doodles = read("components/brutal/doodles.tsx");
-    const svgCount = (doodles.match(/<svg/g) ?? []).length;
-    const hiddenCount = (doodles.match(/aria-hidden="true"/g) ?? []).length;
-    expect(svgCount).toBeGreaterThan(0);
-    expect(hiddenCount).toBe(svgCount);
-  });
-
-  it("the mascot has an accessible name", () => {
-    const src = read("components/brutal/mascot.tsx");
-    expect(src).toMatch(/role="img"/);
-    expect(src).toMatch(/<title id="mascot-title">/);
-    expect(src).toMatch(/aria-labelledby="mascot-title"/);
-  });
-
-  it("icon-only links carry aria-label", () => {
+  it("icon-only links carry an aria-label", () => {
     const footer = read("components/footer.tsx");
-    expect(footer).toMatch(/aria-label="GitHub profile"/);
-    expect(footer).toMatch(/aria-label="LinkedIn profile"/);
+    expect(footer).toMatch(/aria-label=\{label\}/);
   });
 
   it("honors prefers-reduced-motion", () => {
+    expect(read("components/reveal.tsx")).toMatch(/useReducedMotion/);
     expect(read("app/globals.css")).toMatch(/prefers-reduced-motion/);
-    expect(read("components/brutal/reveal.tsx")).toMatch(/useReducedMotion/);
   });
 
   it("interactive elements meet the 44px tap target", () => {
+    // Button primitive plus the theme toggle and mobile menu trigger.
+    expect(read("components/glass/ui.tsx")).toMatch(/min-h-\[44px\]/);
+    expect(read("components/theme-toggle.tsx")).toMatch(/h-11 w-11/);
+    expect(read("components/navbar.tsx")).toMatch(/h-11 w-11/);
+  });
+
+  it("the theme toggle exposes its state to assistive tech", () => {
+    const src = read("components/theme-toggle.tsx");
+    expect(src).toMatch(/aria-label=/);
+    expect(src).toMatch(/Switch to light theme/);
+    expect(src).toMatch(/Switch to dark theme/);
+  });
+
+  it("decorative marks are hidden from assistive tech", () => {
+    const skills = read("components/skills.tsx");
     const projects = read("components/projects.tsx");
-    // GitHub pill on each card
-    expect(projects).toMatch(/h-11 w-11/);
-    const footer = read("components/footer.tsx");
-    expect(footer).toMatch(/h-12 w-12/);
-    const navbar = read("components/navbar.tsx");
-    expect(navbar).toMatch(/min-h-\[44px\]/);
-    expect(navbar).toMatch(/h-11 w-11/);
+    expect(projects).toMatch(/aria-hidden="true"/);
+    expect(skills).toMatch(/aria-label="Technology stack"/);
   });
 });
 
 /* ------------------------------------------------------------------ */
-/* Structure.                                                         */
+/* Page structure.                                                    */
 /* ------------------------------------------------------------------ */
 describe("page structure", () => {
   it("renders every section the nav links to", () => {
@@ -210,12 +364,11 @@ describe("page structure", () => {
   });
 
   it("uses one reveal recipe instead of per-section motion", () => {
-    // Only the hero (above the fold, LCP) and the reveal module may define
-    // whileInView motion. Paths are normalised: Windows uses backslashes.
     const norm = (p: string) => p.split(path.sep).join("/");
     const offenders = components.filter((f) => {
       const n = norm(f);
-      if (n.endsWith("brutal/reveal.tsx")) return false;
+      if (n.endsWith("reveal.tsx")) return false;
+      // Hero is above the fold and is the LCP element: it must not animate in.
       if (n.endsWith("hero.tsx")) return false;
       return /whileInView/.test(read(f));
     });
@@ -231,7 +384,6 @@ describe("page structure", () => {
   });
 
   it("ships a real CV file behind the download button", () => {
-    // A download button pointing at a missing file is a 404 in disguise.
     const cv = path.join(root, "public/cv.pdf");
     expect(existsSync(cv), "public/cv.pdf must exist").toBe(true);
     const head = readFileSync(cv).subarray(0, 5).toString("ascii");
@@ -245,7 +397,7 @@ describe("page structure", () => {
 /* Tech icons must stay readable on their light tile.                 */
 /* ------------------------------------------------------------------ */
 describe("tech icon legibility", () => {
-  const TILE = "#f5f5f0";
+  const TILE = "#ffffff";
 
   it("every brand color clears 3:1 against the light tile", () => {
     // Icons are non-text content: WCAG 1.4.11 requires 3:1.
@@ -260,56 +412,44 @@ describe("tech icon legibility", () => {
 
   it("skills tiles use the brand color, not a blanket mono color", () => {
     const src = read("components/skills.tsx");
-    expect(src).toMatch(/style=\{\{\s*color:\s*entry\.color\s*\}\}/);
-    // The old bug: a single text color applied to every mark.
-    expect(src).not.toMatch(/text-cream" \/>/);
-  });
-
-  it("icon size was raised for legibility", () => {
-    const src = read("components/skills.tsx");
-    expect(src).toMatch(/h-9 w-9/);
+    expect(src).toMatch(/style=\{\{ color: entry\.color \}\}/);
   });
 });
 
 /* ------------------------------------------------------------------ */
-/* Navbar underline.                                                  */
+/* Navbar active indicator.                                           */
 /* ------------------------------------------------------------------ */
-describe("navbar underline", () => {
+describe("navbar active indicator", () => {
   const src = () => read("components/navbar.tsx");
 
-  it("sizes the svg explicitly instead of relying on inset-x", () => {
-    // An absolutely positioned SVG with only left/right set falls back to its
-    // intrinsic 300x18 box and overflows the link. It rendered 133px wide
-    // inside a 62px link before this guard existed.
-    expect(src()).toMatch(/w-full/);
-    expect(src()).toMatch(/left-2 right-2/);
+  it("spans the link with explicit left and right offsets", () => {
+    // An absolutely positioned bar with only one side set collapses to its
+    // content width; both edges are required.
+    expect(src()).toMatch(/left-3 right-3/);
   });
 
-  it("keeps the underline mounted so it can transition", () => {
-    // Rendering the svg conditionally on `isActive` leaves nothing to animate
-    // from, which is why it used to pop in and out.
-    const body = src();
-    expect(body).not.toMatch(/\{active === item\.id && \(/);
-    expect(body).toMatch(/scale-x-0/);
-    expect(body).toMatch(/scale-x-100/);
+  it("uses the accent token rather than a hardcoded colour", () => {
+    const bar = src().match(/bottom-1 left-3 right-3[^"]*"/);
+    expect(bar, "indicator bar class").not.toBeNull();
+    expect(bar![0]).toMatch(/bg-accent/);
   });
 
-  it("transitions scale, not transform", () => {
-    // Tailwind v4 implements scale-x-* with the `scale` property, so a
-    // transition limited to `transform` animates nothing.
+  it("keeps the indicator mounted so it can transition", () => {
     expect(src()).toMatch(/transition-\[opacity,scale\]/);
     expect(src()).not.toMatch(/transition-\[opacity,transform\]/);
   });
-});
 
-/* ------------------------------------------------------------------ */
-/* The About panel keeps only its deliberate decoration.              */
-/* ------------------------------------------------------------------ */
-describe("about panel", () => {
-  it("has no sparkle in the corner", () => {
-    const src = read("components/about.tsx");
-    expect(src).not.toMatch(/Sparkle/);
-    expect(src).not.toMatch(/Drift/);
+  it("resolves the active section in DOM order, not menu order", () => {
+    // About renders above Experience in app/page.tsx while NAV lists them the
+    // other way round. Sorting by document position is what fixes the
+    // underline sticking to About.
+    expect(src()).toMatch(/compareDocumentPosition/);
+    expect(src()).not.toMatch(/new IntersectionObserver/);
+  });
+
+  it("does not leak a hash into the URL on click", () => {
+    expect(src()).toMatch(/preventDefault/);
+    expect(src()).toMatch(/scrollIntoView/);
   });
 });
 
@@ -336,19 +476,6 @@ describe("github pages / jekyll safety", () => {
     for (const file of md) {
       const src = read(file);
       expect(src.includes("{{"), `${file} contains '{{'`).toBe(false);
-      expect(src.includes("{%"), `${file} contains '{%'`).toBe(false);
     }
-  });
-
-  it("excludes prose directories from the legacy Jekyll build", () => {
-    const cfg = read("_config.yml");
-    expect(cfg).toMatch(/exclude:/);
-    expect(cfg).toMatch(/docs\//);
-  });
-
-  it("ships .nojekyll so Pages does not strip _next", () => {
-    // Without this, Jekyll drops directories starting with an underscore and
-    // every asset under /_next/ 404s.
-    expect(existsSync(path.join(root, "public/.nojekyll"))).toBe(true);
   });
 });

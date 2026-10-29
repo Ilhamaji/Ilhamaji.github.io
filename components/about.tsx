@@ -1,66 +1,68 @@
 "use client";
 
 import { ArrowUpRight, Download } from "lucide-react";
-import { BrutalButton, SectionHead, Tape } from "@/components/brutal/ui";
-import { Reveal } from "@/components/brutal/reveal";
-import { Mascot } from "@/components/brutal/mascot";
-import { Crown } from "@/components/brutal/doodles";
+import { GlassButton, GlassCard, SectionHead } from "@/components/glass/ui";
+import { Reveal } from "@/components/reveal";
 
 const BIO =
   "Full-Stack Web Developer & NLP Engineer with expertise in building scalable web applications, AI module integration (Groq Llama 3.3, PyMuPDF, Prompt Engineering), and cloud deployments (GCP, Firebase). Skilled in Next.js, Laravel, Node.js, Python, and secure RESTful APIs.";
 
+const FACTS = [
+  { label: "Based in", value: "Surakarta, Indonesia" },
+  { label: "Certification", value: "Bangkit Academy — Cloud Computing" },
+];
+
 export function About() {
   return (
-    <section id="about" className="px-6 py-20" aria-labelledby="about-heading">
-      <div className="mx-auto max-w-6xl">
+    <section id="about" className="px-6 py-16 md:py-20" aria-labelledby="about-heading">
+      <div className="mx-auto max-w-5xl">
         <Reveal>
-          <div className="grid overflow-hidden rounded-2xl border-3 border-cream/15 md:grid-cols-[0.8fr_1.2fr]">
-            {/* illustrated panel */}
-            <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden bg-lime p-6 pt-14 md:min-h-[320px]">
-              <Tape className="absolute left-4 top-4 rotate-[-2deg] bg-ink text-lime">
-                Focus · Discipline · Consistency
-              </Tape>
-              <Crown className="absolute right-5 top-5 h-7 w-9 text-ink" />
-              <div className="mt-8 w-[52%] max-w-[210px]">
-                <Mascot />
+          <GlassCard className="p-6 md:p-10">
+            <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
+              {/* text panel */}
+              <div>
+                <SectionHead
+                  id="about-heading"
+                  eyebrow="A little context"
+                  title="About me"
+                />
+
+                <p className="mt-4 text-[15px] leading-relaxed text-label-2">
+                  {BIO}
+                </p>
+
+                <dl className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {FACTS.map((f) => (
+                    <div
+                      key={f.label}
+                      className="rounded-[var(--radius-sm)] bg-surface-2 p-4"
+                    >
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-label-2">
+                        {f.label}
+                      </dt>
+                      <dd className="mt-1 text-[15px] text-label">{f.value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-            </div>
 
-            {/* text panel */}
-            <div className="p-6 md:p-10">
-              <SectionHead eyebrow="A little context" title="About Me" />
-
-              <p className="mt-4 text-sm leading-relaxed text-muted">{BIO}</p>
-
-              <dl className="mt-6 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border-3 border-cream/15 p-3">
-                  <dt className="text-[11px] uppercase tracking-wide text-muted">
-                    Based in
-                  </dt>
-                  <dd className="mt-0.5 text-sm text-cream">Surakarta, Indonesia</dd>
-                </div>
-                <div className="rounded-xl border-3 border-cream/15 p-3">
-                  <dt className="text-[11px] uppercase tracking-wide text-muted">
-                    Certification
-                  </dt>
-                  <dd className="mt-0.5 text-sm text-cream">
-                    Bangkit Academy — Cloud Computing
-                  </dd>
-                </div>
-              </dl>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <BrutalButton href="/cv.pdf" variant="lime" download="CV_M_Ilham_Aji_Saputra_Fullstack_ATS.pdf">
+              {/* action panel */}
+              <div className="flex flex-col justify-end gap-3">
+                <GlassButton
+                  href="/cv.pdf"
+                  variant="primary"
+                  download="CV_M_Ilham_Aji_Saputra_Fullstack_ATS.pdf"
+                >
                   <Download className="h-4 w-4" aria-hidden="true" />
                   Download CV
-                </BrutalButton>
-                <BrutalButton href="#experience" variant="cream">
+                </GlassButton>
+                <GlassButton href="#experience" variant="secondary">
                   More about my work
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                </BrutalButton>
+                </GlassButton>
               </div>
             </div>
-          </div>
+          </GlassCard>
         </Reveal>
       </div>
     </section>
