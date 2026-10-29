@@ -451,6 +451,22 @@ describe("navbar active indicator", () => {
     expect(src()).toMatch(/preventDefault/);
     expect(src()).toMatch(/scrollIntoView/);
   });
+
+  it("renders the mobile sheet outside the blurred header", () => {
+    // `backdrop-filter` on <header> makes it a containing block for
+    // position:fixed descendants, so a sheet nested inside it takes the
+    // header's 64px height instead of the viewport and its links stack on top
+    // of the page content. The sheet must be a sibling of <header>.
+    const src = read("components/navbar.tsx");
+    const headerEnd = src.indexOf("</header>");
+    const sheetStart = src.indexOf('id="mobile-menu"');
+    expect(headerEnd, "header must close before the sheet").toBeGreaterThan(-1);
+    expect(sheetStart, "mobile sheet must exist").toBeGreaterThan(-1);
+    expect(sheetStart).toBeGreaterThan(headerEnd);
+    // And it must still be viewport-sized and opaque.
+    expect(src).toMatch(/fixed inset-0/);
+    expect(src).toMatch(/bg-bg/);
+  });
 });
 
 /* ------------------------------------------------------------------ */

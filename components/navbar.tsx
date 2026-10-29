@@ -163,81 +163,96 @@ export function Navbar() {
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-separator bg-bg/70 backdrop-blur-xl backdrop-saturate-150">
-      <nav
-        aria-label="Main"
-        className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6"
-      >
-        <a
-          href="#top"
-          onClick={(e) => goTo("top", e)}
-          className="text-[17px] font-semibold tracking-[-0.02em] text-label"
-          aria-label="M. Ilham Aji Saputra — back to top"
+    <>
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-separator bg-bg/70 backdrop-blur-xl backdrop-saturate-150">
+        <nav
+          aria-label="Main"
+          className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6"
         >
-          Ilham
-          <span className="text-accent">.</span>
-        </a>
+          <a
+            href="#top"
+            onClick={(e) => goTo("top", e)}
+            className="text-[17px] font-semibold tracking-[-0.02em] text-label"
+            aria-label="M. Ilham Aji Saputra — back to top"
+          >
+            Ilham
+            <span className="text-accent">.</span>
+          </a>
 
-        <ul className="hidden items-center gap-1 md:flex">
-          {NAV.map((item) => {
-            const isActive = active === item.id;
-            return (
-              <li key={item.id}>
-                <a
-                  href={`#${item.id}`}
-                  onClick={(e) => goTo(item.id, e)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "group relative inline-flex min-h-[44px] items-center px-3 text-[15px] transition-colors duration-200",
-                    isActive ? "text-label" : "text-label-2 hover:text-label"
-                  )}
-                >
-                  {item.label}
-
-                  {/*
-                    Every item carries its own indicator; only the active one is
-                    visible. Keeping it mounted is what makes the transition
-                    possible: a node that appears only when active has nothing
-                    to animate from.
-
-                    The bar needs an explicit left/right so it spans the link;
-                    without both it collapses to its content width.
-                  */}
-                  <span
-                    aria-hidden="true"
+          <ul className="hidden items-center gap-1 md:flex">
+            {NAV.map((item) => {
+              const isActive = active === item.id;
+              return (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    onClick={(e) => goTo(item.id, e)}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "pointer-events-none absolute bottom-1 left-3 right-3 h-[2px] rounded-full bg-accent",
-                      "origin-left transition-[opacity,scale] duration-300 ease-out",
-                      isActive
-                        ? "scale-x-100 opacity-100"
-                        : "scale-x-0 opacity-0"
+                      "group relative inline-flex min-h-[44px] items-center px-3 text-[15px] transition-colors duration-200",
+                      isActive ? "text-label" : "text-label-2 hover:text-label"
                     )}
-                  />
-                </a>
-              </li>
-            );
-          })}
-        </ul>
+                  >
+                    {item.label}
 
-        <div className="hidden items-center gap-2 md:flex">
-          <ThemeToggle />
-          <GlassButton href="#contact" variant="primary" onClick={(e) => goTo("contact", e)}>
-            Hire me
-          </GlassButton>
-        </div>
+                    {/*
+                      Every item carries its own indicator; only the active one is
+                      visible. Keeping it mounted is what makes the transition
+                      possible: a node that appears only when active has nothing
+                      to animate from.
 
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label="Open menu"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-separator bg-surface-2 text-label md:hidden"
-        >
-          <Menu className="h-5 w-5" aria-hidden="true" />
-        </button>
-      </nav>
+                      The bar needs an explicit left/right so it spans the link;
+                      without both it collapses to its content width.
+                    */}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none absolute bottom-1 left-3 right-3 h-[2px] rounded-full bg-accent",
+                        "origin-left transition-[opacity,scale] duration-300 ease-out",
+                        isActive
+                          ? "scale-x-100 opacity-100"
+                          : "scale-x-0 opacity-0"
+                      )}
+                    />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
 
+          <div className="hidden items-center gap-2 md:flex">
+            <ThemeToggle />
+            <GlassButton
+              href="#contact"
+              variant="primary"
+              onClick={(e) => goTo("contact", e)}
+            >
+              Hire me
+            </GlassButton>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label="Open menu"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-separator bg-surface-2 text-label md:hidden"
+          >
+            <Menu className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </nav>
+      </header>
+
+      {/*
+        The sheet is a SIBLING of <header>, not a child.
+
+        `backdrop-filter` on the header (the frosted glass) makes it a
+        containing block for `position: fixed` descendants, so a sheet nested
+        inside it was sized to the 64px header instead of the viewport and its
+        items stacked on top of the page content. Keeping it outside the
+        blurred element is what lets `fixed inset-0` mean the viewport again.
+      */}
       {open && (
         <div
           id="mobile-menu"
@@ -245,7 +260,7 @@ export function Navbar() {
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
-          className="fixed inset-0 z-50 bg-bg px-6 py-4 md:hidden"
+          className="fixed inset-0 z-[60] flex flex-col bg-bg px-6 pb-8 pt-4 md:hidden"
         >
           <div className="flex items-center justify-between">
             <span className="text-[17px] font-semibold tracking-[-0.02em] text-label">
@@ -264,7 +279,7 @@ export function Navbar() {
             </div>
           </div>
 
-          <ul className="mt-10 flex flex-col">
+          <ul className="mt-6 flex flex-1 flex-col overflow-y-auto">
             {NAV.map((item) => (
               <li key={item.id} className="border-b border-separator">
                 <a
@@ -272,8 +287,8 @@ export function Navbar() {
                   onClick={(e) => goTo(item.id, e)}
                   aria-current={active === item.id ? "page" : undefined}
                   className={cn(
-                    "flex min-h-[56px] items-center text-[19px] font-medium",
-                    active === item.id ? "text-label" : "text-label-2"
+                    "flex min-h-[56px] items-center text-[19px] font-medium transition-colors",
+                    active === item.id ? "text-accent" : "text-label"
                   )}
                 >
                   {item.label}
@@ -282,7 +297,7 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="mt-8">
+          <div className="mt-6">
             <GlassButton
               href="#contact"
               variant="primary"
@@ -294,6 +309,6 @@ export function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
