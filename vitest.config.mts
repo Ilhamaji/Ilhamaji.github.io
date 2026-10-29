@@ -9,7 +9,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "."),
+      // `import.meta.dirname` rather than `__dirname`: Vite's native config
+      // loader warns that __dirname is unsupported and is slated to become the
+      // default loader in the next major.
+      "@": path.resolve(import.meta.dirname, "."),
     },
   },
 });

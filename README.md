@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ilhamaji.github.io
 
-## Getting Started
+Personal portfolio of M. Ilham Aji Saputra — Full-Stack Web Developer & NLP
+Engineer. Built with Next.js (App Router) and Tailwind CSS v4, exported as a
+static site and deployed to GitHub Pages.
 
-First, run the development server:
+## Requirements
+
+- Node.js **22.12+** (vitest 5 requires it; see `.github/workflows/deploy.yml`)
+- npm — this repo uses npm only. `package-lock.json` is the single source of
+  truth for dependency resolution.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Development server |
+| `npm run build` | Static export to `out/` |
+| `npm test` | Vitest suite (design invariants, content integrity, a11y) |
+| `npm run lint` | ESLint |
 
-## Learn More
+## Design system
 
-To learn more about Next.js, take a look at the following resources:
+The UI is an iOS 26 "Liquid Glass" system: light and dark themes driven by CSS
+variables under `[data-theme]`, a translucent glass material, the system font
+stack, and a system-blue accent.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Tokens live in `app/globals.css`. Components never use `dark:` variants —
+  one set of classes, variables do the switching.
+- Surface primitives (`GlassCard`, `GlassButton`, `SectionHead`, `Pill`) live in
+  `components/glass/ui.tsx`; it is the only place the material is composed.
+- The theme is applied before first paint by `components/theme-script.tsx` so a
+  dark-OS visitor never sees a white flash.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Contrast
 
-## Deploy on Vercel
+Apple's stock values do not meet WCAG AA as normal-weight text, so the accent is
+split into two tokens: `--accent` for text and `--accent-fill` for button
+surfaces. Every foreground/background pair in both themes is asserted with
+computed ratios in `__tests__/design-invariants.test.ts` — not eyeballed.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pushes to `master` run `.github/workflows/deploy.yml`: install, test, build,
+and publish `out/` to GitHub Pages.
+
+## Notes
+
+- There is intentionally **no preloader**. A previous one deadlocked on screen;
+  `__tests__/preloader-regression.test.ts` guards against it returning.
+- `next dev` regenerates `AGENTS.md`; that block is committed on purpose so the
+  working tree stays clean.

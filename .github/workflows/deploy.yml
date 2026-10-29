@@ -23,7 +23,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # vitest 5 requires >=22.12 (see its engines field); Node 20 fails
+          # the test run even though `next build` alone would still work.
+          node-version: "22"
           cache: "npm"
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -31,6 +33,10 @@ jobs:
           static_site_generator: next
       - name: Install dependencies
         run: npm install
+      - name: Run tests
+        # The design-invariant suite guards the theme tokens, contrast ratios
+        # and navbar behaviour. Running it here stops a broken deploy.
+        run: npm test
       - name: Build with Next.js
         run: npx next build
       - name: Upload artifact
