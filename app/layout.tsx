@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Rubik } from "next/font/google";
 import "./globals.css";
-import { RootProvider } from "@/components/root-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -30,15 +25,20 @@ export const metadata: Metadata = {
     "Bangkit Academy"
   ],
   authors: [{ name: "M. Ilham Aji Saputra", url: "https://ilhamaji.github.io" }],
+  icons: { icon: "/favicon.ico" },
   openGraph: {
     title: "M. Ilham Aji Saputra | Full-Stack Web Developer & AI Engineer",
     description:
       "Full-Stack Web Developer & NLP Engineer skilled in Next.js, Laravel, Python, Llama 3.3 AI modules, and GCP cloud infrastructure.",
     url: "https://ilhamaji.github.io",
     siteName: "M. Ilham Aji Saputra Portfolio",
-    locale: "id_ID",
+    locale: "en_US",
     type: "website",
   },
+};
+
+export const viewport = {
+  themeColor: "#0D0D0D",
 };
 
 export default function RootLayout({
@@ -47,15 +47,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="id"
-      suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-minimal font-sans no-scrollbar">
-        <RootProvider>
-          {children}
-        </RootProvider>
+    <html lang="en" className={`${rubik.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-ink text-cream font-body">
+        {children}
       </body>
     </html>
   );

@@ -1,94 +1,182 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Home, Briefcase, Code2, Mail, GraduationCap, Sun, Moon, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
+import { useEffect, useRef, useState } from "react";
+import { Menu, X } from "lucide-react";
+import { BrutalButton } from "@/components/brutal/ui";
+import { Underline } from "@/components/brutal/doodles";
+import { cn } from "@/lib/utils";
+
+const NAV = [
+  { id: "top", label: "Home" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "experience", label: "Experience" },
+  { id: "about", label: "About" },
+  { id: "contact", label: "Contact" },
+];
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("top");
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("top");
+  const sheetRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => setMounted(true), []);
-
+  // Active section via IntersectionObserver rather than a scroll-offset scan.
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    const sections = NAV.map((n) => document.getElementById(n.id)).filter(
+      (el): el is HTMLElement => el !== null
+    );
+    if (sections.length === 0) return;
 
-      const sections = ["top", "experience", "projects", "skills", "education", "contact"];
-      const current = sections.find((section) => {
-        const el = document.getElementById(section);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          return rect.top >= -150 && rect.top <= 250;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] }
+    );
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
   }, []);
 
-  const navItems = [
-    { id: "top", name: "Beranda", icon: <Home className="w-4 h-4" />, href: "#top" },
-    { id: "experience", name: "Pengalaman", icon: <Sparkles className="w-4 h-4" />, href: "#experience" },
-    { id: "projects", name: "Proyek", icon: <Briefcase className="w-4 h-4" />, href: "#projects" },
-    { id: "skills", name: "Skill", icon: <Code2 className="w-4 h-4" />, href: "#skills" },
-    { id: "education", name: "Edukasi", icon: <GraduationCap className="w-4 h-4" />, href: "#education" },
-    { id: "contact", name: "Kontak", icon: <Mail className="w-4 h-4" />, href: "#contact" },
-  ];
+  // Escape closes the sheet; body scroll is locked while it is open.
+  useEffect(() => {
+    if (!open) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Tab" && sheetRef.current) {
+        const focusables = sheetRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])'
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+
+    // Move focus into the sheet so keyboard users are not stranded behind it.
+    const firstLink = sheetRef.current?.querySelector<HTMLElement>("a[href]");
+    firstLink?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 w-full max-w-fit">
-      <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className={`flex items-center gap-1 p-2 rounded-full border transition-all duration-500 ${
-          scrolled
-            ? "glass shadow-2xl scale-105"
-            : "bg-white/40 dark:bg-black/40 backdrop-blur-md border-white/20 dark:border-white/10 shadow-sm"
-        }`}
+    <header className="fixed inset-x-0 top-0 z-50 border-b-3 border-cream/10 bg-ink/90 backdrop-blur-sm">
+      <nav
+        aria-label="Main"
+        className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6"
       >
-        {navItems.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className={`relative flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all active:scale-95 ${
-              activeSection === item.id
-                ? "text-primary bg-white dark:bg-gray-800 shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-            }`}
-          >
-            {activeSection === item.id && (
-              <motion.div
-                layoutId="nav-active"
-                className="absolute inset-0 bg-white dark:bg-gray-800 rounded-full shadow-sm -z-10"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-              />
-            )}
-            {item.icon}
-            <span className="hidden sm:inline">{item.name}</span>
-          </a>
-        ))}
+        <a
+          href="#top"
+          className="font-display text-xl tracking-wide text-cream"
+          aria-label="M. Ilham Aji Saputra — back to top"
+        >
+          ILHAM
+          <span className="text-lime">.</span>
+        </a>
 
-        <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1" />
+        <ul className="hidden items-center gap-1 md:flex">
+          {NAV.map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                aria-current={active === item.id ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex min-h-[44px] items-center px-3 text-sm transition-colors",
+                  active === item.id
+                    ? "text-cream"
+                    : "text-muted hover:text-cream"
+                )}
+              >
+                {item.label}
+                {active === item.id && (
+                  <Underline className="absolute inset-x-2 bottom-2 h-2 text-lime" />
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden md:block">
+          <BrutalButton href="#contact" variant="lime">
+            Hire Me
+          </BrutalButton>
+        </div>
 
         <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="p-2 rounded-full hover:bg-white/50 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-400"
-          aria-label="Toggle theme"
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label="Open menu"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-3 border-cream/20 text-cream md:hidden"
         >
-          {mounted && (theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />)}
+          <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
-      </motion.div>
-    </nav>
+      </nav>
+
+      {open && (
+        <div
+          id="mobile-menu"
+          ref={sheetRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          className="fixed inset-0 z-50 flex flex-col bg-ink px-6 pt-6 md:hidden"
+        >
+          <div className="flex items-center justify-between">
+            <span className="font-display text-xl text-cream">
+              ILHAM<span className="text-lime">.</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-xl border-3 border-cream/20 text-cream"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </div>
+
+          <ul className="mt-10 flex flex-col gap-1">
+            {NAV.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-[52px] items-center font-display text-2xl text-cream"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8">
+            <BrutalButton href="#contact" variant="lime" onClick={() => setOpen(false)}>
+              Hire Me
+            </BrutalButton>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }
