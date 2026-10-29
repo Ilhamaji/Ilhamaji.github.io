@@ -470,6 +470,77 @@ describe("navbar active indicator", () => {
 });
 
 /* ------------------------------------------------------------------ */
+/* Hero window: the Craft-style launcher.                             */
+/* ------------------------------------------------------------------ */
+describe("hero window", () => {
+  const window_ = () => read("components/hero-window.tsx");
+  const tiles = () => read("components/hero-tiles.tsx");
+
+  it("links every tile to a section that exists", () => {
+    // A tile pointing at a missing id would zoom into nothing and leave the
+    // visitor on a blank overlay.
+    const src = tiles();
+    const targets = [...src.matchAll(/target:\s*"([a-z-]+)"/g)].map((m) => m[1]);
+    expect(targets.length).toBeGreaterThan(0);
+
+    const ids = [
+      read("components/hero.tsx"),
+      read("components/projects.tsx"),
+      read("components/skills.tsx"),
+      read("components/about.tsx"),
+      read("components/experience.tsx"),
+      read("components/education.tsx"),
+      read("components/footer.tsx"),
+    ].join("\n");
+
+    for (const t of targets) {
+      expect(ids, `no section with id="${t}"`).toContain(`id="${t}"`);
+    }
+  });
+
+  it("sequences the zoom before the scroll", () => {
+    // Firing both at once makes the tile explode and vanish mid-flight.
+    const src = tiles();
+    const zoomIdx = src.indexOf("setZooming(");
+    const timeoutIdx = src.indexOf("window.setTimeout");
+    const scrollIdx = src.indexOf("scroll()", timeoutIdx);
+    expect(zoomIdx).toBeGreaterThan(-1);
+    expect(timeoutIdx).toBeGreaterThan(zoomIdx);
+    expect(scrollIdx).toBeGreaterThan(timeoutIdx);
+  });
+
+  it("skips the zoom when reduced motion is requested", () => {
+    expect(tiles()).toMatch(/useReducedMotion/);
+    expect(tiles()).toMatch(/if \(reduce \|\| !target\)/);
+  });
+
+  it("clears in-flight timers on unmount", () => {
+    expect(tiles()).toMatch(/useEffect\(\(\) => clearTimers/);
+  });
+
+  it("keeps the zoom layer from trapping clicks", () => {
+    expect(window_()).toMatch(/pointer-events-none/);
+  });
+
+  it("does not reintroduce gradient backgrounds", () => {
+    expect(window_()).not.toMatch(/linear-gradient|radial-gradient/);
+  });
+
+  it("uses the shared reveal recipe, not its own whileInView", () => {
+    expect(window_()).not.toMatch(/whileInView/);
+    expect(window_()).toMatch(/<Reveal/);
+  });
+
+  it("drives the tilt without a re-render per pointer move", () => {
+    // Custom properties on the wrapper, not React state: a setState per
+    // mousemove is what makes a page feel janky.
+    const src = window_();
+    expect(src).toMatch(/setProperty\("--rx"/);
+    expect(src).toMatch(/onPointerMove/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
 /* GitHub Pages deployment.                                           */
 /* ------------------------------------------------------------------ */
 describe("github pages deployment", () => {

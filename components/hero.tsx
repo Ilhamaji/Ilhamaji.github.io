@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { GlassButton, Pill } from "@/components/glass/ui";
+import { HeroWindow } from "@/components/hero-window";
 
 /* Verbatim from the previous hero — no claim added, none removed. */
 const BIO =
@@ -13,13 +14,14 @@ const BIO =
  * `Reveal` is scroll-triggered, which is right for sections below the fold.
  * Applying it here made above-the-fold content animate in late, so the first
  * thing a visitor saw was a half-drawn page. Hero content is the LCP element:
- * it renders at final opacity immediately.
+ * it renders at final opacity immediately. The window below the copy has its
+ * own entrance, which is fine because it is not the LCP element.
  */
 export function Hero() {
   return (
     <section
       id="top"
-      className="px-6 pb-24 pt-32 md:pb-32 md:pt-40"
+      className="relative px-6 pt-32 md:pt-40"
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto max-w-3xl">
@@ -46,13 +48,22 @@ export function Hero() {
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <GlassButton href="#projects" variant="primary">
             View projects
-            <ArrowDown className="h-4 w-4" aria-hidden="true" />
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </GlassButton>
           <GlassButton href="#contact" variant="secondary">
             Get in touch
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </GlassButton>
         </div>
+      </div>
+
+      {/*
+        The window is pushed down and clipped by the section so it reads as
+        rising out of the bottom edge, the way the reference does. The negative
+        bottom margin pulls the next section up so no dead band is left behind.
+      */}
+      <div className="relative mx-auto mt-16 max-w-4xl md:mt-20">
+        <HeroWindow />
       </div>
     </section>
   );
