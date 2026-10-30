@@ -550,11 +550,13 @@ describe("hero window", () => {
     expect(read("components/section-window.tsx")).toMatch(/data-section-window=""/);
   });
 
-  it("is opaque from the first frame", () => {
-    // The cover has to hide the page jump; anything translucent shows it.
+  it("covers the page jump behind a blurred veil", () => {
+    // The veil hides the scroll jump. It is translucent and blurred rather
+    // than opaque: an opaque sheet turned the screen black in dark mode, which
+    // read as a flash instead of a window opening.
     const src = window_();
-    expect(src).toMatch(/initial=\{\{ opacity: 1 \}\}/);
-    expect(src).toMatch(/bg-bg/);
+    expect(src).toMatch(/fixed inset-0 bg-bg\//);
+    expect(src).toMatch(/backdrop-blur/);
   });
 
   it("renders the destination title inside the frame", () => {

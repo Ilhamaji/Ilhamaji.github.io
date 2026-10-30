@@ -94,7 +94,7 @@ function Tile({
  * kind of thing that makes an otherwise smooth page feel janky.
  */
 export function HeroWindow() {
-  const { zoomTo, zooming, GROW_MS, RELEASE_MS } = useZoomToSection();
+  const { zoomTo, zooming, GROW_MS } = useZoomToSection();
   const reduce = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -212,12 +212,21 @@ export function HeroWindow() {
         {zooming && (
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none fixed inset-0 z-[80] bg-bg"
-            initial={{ opacity: 1 }}
+            className="pointer-events-none fixed inset-0 z-[80]"
+            initial={{ opacity: 0 }}
+            // A dimmed, blurred page rather than an opaque sheet: in dark mode
+            // an opaque cover turned the whole screen black for half a second,
+            // which read as a flash rather than a window opening.
             animate={{ opacity: zooming.phase === "release" ? 0 : 1 }}
             exit={{ opacity: 0, transition: { duration: 0.16 } }}
-            transition={{ duration: RELEASE_MS / 1000, ease: "easeInOut" }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
           >
+            <motion.div
+              className="fixed inset-0 bg-bg/80 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            />
             <motion.div
               className="fixed overflow-hidden rounded-[20px] border border-separator bg-bg shadow-[0_30px_90px_-24px_rgb(0_0_0/0.4)]"
               initial={{
