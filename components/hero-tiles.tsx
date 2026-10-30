@@ -17,12 +17,12 @@ export type HeroTile = {
 };
 
 export const HERO_TILES: HeroTile[] = [
-  { target: "projects", label: "Projects", meta: "4 shipped systems", accent: "#0066d6" },
-  { target: "skills", label: "Skills", meta: "16 tools I reach for", accent: "#7c3aed" },
+  { target: "projects", label: "Projects", meta: "Selected work", accent: "#0066d6" },
+  { target: "skills", label: "Skills", meta: "Tools I reach for", accent: "#7c3aed" },
   { target: "about", label: "About", meta: "A little context", accent: "#0f9d58" },
   { target: "experience", label: "Experience", meta: "Where I've worked", accent: "#e8710a" },
   { target: "education", label: "Education", meta: "Academic background", accent: "#0b8a9b" },
-  { target: "contact", label: "Contact", meta: "Open to work", accent: "#c5221f" },
+  { target: "contact", label: "Contact", meta: "Let's talk", accent: "#c5221f" },
 ];
 
 /**
