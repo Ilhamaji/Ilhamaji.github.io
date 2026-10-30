@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { HERO_TILES, useZoomToSection, type HeroTile } from "@/components/hero-tiles";
 import { TilePreview } from "@/components/tile-previews";
+import { MacWindowChrome } from "@/components/mac-window-chrome";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
 
@@ -235,21 +236,26 @@ export function HeroWindow() {
               }}
               transition={{ duration: GROW_MS / 1000, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span
-                aria-hidden="true"
-                className="block h-[3px] w-full"
-                style={{ background: zooming.accent }}
-              />
-              <div className="flex items-center gap-3 border-b border-separator px-4 py-3">
-                <div aria-hidden="true" className="flex shrink-0 items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+              <MacWindowChrome accent={zooming.accent} title={zooming.label} />
+              {/*
+                The window shows the destination's miniature, scaled up as the
+                frame grows, then hands over to the real panel.
+
+                The full section content was tried here and rejected: a section
+                is ~2000px tall on mobile, so shrinking the window onto its
+                panel dragged the frame far off-screen. The miniature carries
+                the same information at a size that fits the animation.
+              */}
+              <motion.div
+                className="flex h-[calc(100%-56px)] items-center justify-center overflow-hidden p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.22, ease: "easeOut", delay: 0.1 }}
+              >
+                <div className="w-full max-w-md">
+                  <TilePreview target={zooming.target} />
                 </div>
-                <span className="truncate text-[13.5px] font-semibold text-label">
-                  {zooming.label}
-                </span>
-              </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         )}

@@ -49,6 +49,8 @@ export type ZoomState = {
   start: { top: number; left: number; width: number; height: number };
   /** Where it ends: the destination panel's rect in final scroll position. */
   end: { top: number; left: number; width: number; height: number };
+  /** Section id, so the window can show that section's miniature. */
+  target: string;
   accent: string;
   label: string;
   phase: "grow" | "release";
@@ -78,14 +80,23 @@ function rectOf(el: HTMLElement) {
 function whenPanelSettled(
   panel: HTMLElement,
   done: (rect: { top: number; left: number; width: number; height: number }) => void,
-  deadline = 1500
+  deadline = 900
 ) {
-  const started = performance.now();
   let last = panel.getBoundingClientRect();
   let stableFrames = 0;
   let raf = 0;
+  let finished = false;
+
+  const report = (el: DOMRect) => {
+    if (finished) return;
+    finished = true;
+    cancelAnimationFrame(raf);
+    clearTimeout(fallback);
+    done({ top: el.top, left: el.left, width: el.width, height: el.height });
+  };
 
   const tick = () => {
+    if (finished) return;
     const now = panel.getBoundingClientRect();
     const moved =
       Math.abs(now.top - last.top) > 0.2 ||
@@ -96,17 +107,30 @@ function whenPanelSettled(
     last = now;
     stableFrames = moved ? 0 : stableFrames + 1;
 
-    // 6 unchanged frames (~100ms) is enough now that nothing translates;
-    // this only needs to cover the scroll committing.
-    if (stableFrames >= 6 || performance.now() - started > deadline) {
-      done({ top: now.top, left: now.left, width: now.width, height: now.height });
+    // 6 unchanged frames (~100ms) is enough: nothing translates any more, this
+    // only needs to cover the scroll committing.
+    if (stableFrames >= 6) {
+      report(now);
       return;
     }
     raf = requestAnimationFrame(tick);
   };
 
+  // The deadline cannot live inside `tick`: requestAnimationFrame stops firing
+  // in background tabs and in some embedded contexts, and then the transition
+  // would hang on the tile forever instead of completing. A timer guarantees
+  // the handover happens even if no frame ever arrives.
+  const fallback = window.setTimeout(() => {
+    report(panel.getBoundingClientRect());
+  }, deadline);
+
   raf = requestAnimationFrame(tick);
-  return () => cancelAnimationFrame(raf);
+
+  return () => {
+    finished = true;
+    cancelAnimationFrame(raf);
+    clearTimeout(fallback);
+  };
 }
 
 /**
@@ -154,6 +178,7 @@ export function useZoomToSection() {
       setZooming({
         start,
         end: start,
+        target: tile.target,
         accent: tile.accent,
         label: tile.label,
         phase: "grow",
@@ -165,11 +190,23 @@ export function useZoomToSection() {
       // then its `Reveal` finishes drifting ~8px. Measuring before that drifts
       // to a stop is what made the window land short.
       whenPanelSettled(panel, (end) => {
-        setZooming({ start, end, accent: tile.accent, label: tile.label, phase: "grow" });
+        // A panel can be far taller than the screen (on mobile a section is a
+        // column of cards ~2000px tall). Chasing its full height would drag the
+        // window off-screen instead of settling onto it, so the landing height
+        // is clamped to the viewport; the width and horizontal position still
+        // match exactly, which is what the eye reads at the handover.
+        const maxHeight = window.innerHeight - 16;
+        const landing = {
+          ...end,
+          top: Math.min(Math.max(end.top, 8), maxHeight - 8),
+          height: Math.min(end.height, maxHeight - Math.max(end.top, 8)),
+        };
+
+        setZooming({ start, end: landing, target: tile.target, accent: tile.accent, label: tile.label, phase: "grow" });
 
         timers.current.push(
           window.setTimeout(() => {
-            setZooming({ start, end, accent: tile.accent, label: tile.label, phase: "release" });
+            setZooming({ start, end: landing, target: tile.target, accent: tile.accent, label: tile.label, phase: "release" });
             timers.current.push(window.setTimeout(() => setZooming(null), RELEASE_MS));
           }, GROW_MS)
         );
