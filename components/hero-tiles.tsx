@@ -25,33 +25,93 @@ export const HERO_TILES: HeroTile[] = [
   { target: "contact", label: "Contact", meta: "Open to work", accent: "#c5221f" },
 ];
 
-/** Phases of the transition, each driven by its own timeout. */
-const ZOOM_MS = 520; // tile grows to fill the viewport
-const HOLD_MS = 120; // section title sits on screen before handing over
-const FADE_MS = 340; // overlay dims out over the scrolled page
+/**
+ * Timing for the landing transition.
+ *
+ * The order matters more than the easing:
+ *
+ *   1. put an opaque cover up and jump the page, so the jump is never seen;
+ *   2. compute the panel's FINAL rect arithmetically, while the window is
+ *      still on the tile;
+ *   3. grow the window onto that rect;
+ *   4. swap it for the real panel at identical pixels.
+ *
+ * Measuring the panel after the jump instead of computing its final rect was
+ * the bug behind the 8px seam: `getBoundingClientRect()` right after
+ * `scrollIntoView` still reports the pre-scroll layout, so the window landed
+ * short and the handover showed a sliver of the page.
+ */
+const GROW_MS = 460;
+const RELEASE_MS = 220;
 
 export type ZoomState = {
   /** Where the window starts: the tile's own rect. */
   start: { top: number; left: number; width: number; height: number };
-  /** Where it ends: the near-fullscreen frame, inset from the viewport. */
+  /** Where it ends: the destination panel's rect in final scroll position. */
   end: { top: number; left: number; width: number; height: number };
   accent: string;
   label: string;
-  meta: string;
-  /** "zoom" grows the window, "hold" keeps it, "fade" dissolves it. */
-  phase: "zoom" | "hold" | "fade";
+  phase: "grow" | "release";
 };
 
+function panelFor(section: HTMLElement): HTMLElement {
+  return section.querySelector<HTMLElement>("[data-section-window]") ?? section;
+}
+
+function rectOf(el: HTMLElement) {
+  const r = el.getBoundingClientRect();
+  return { top: r.top, left: r.left, width: r.width, height: r.height };
+}
+
 /**
- * Scrolls to a section with the zoom as its transition.
+ * Waits until the panel's rect has stopped moving, then reports it.
  *
- * Three phases rather than one, because a single scale-up that is cut off by a
- * scroll reads as the card exploding. Growing, holding while the destination
- * title is shown, then dissolving over the already-scrolled page makes the two
- * animations feel like one continuous move.
+ * Two things move after `scrollIntoView`: the scroll offset, and the section's
+ * own `Reveal` (a fade-and-rise lasting ~400ms). A measurement taken while
+ * either is in flight lands the window ~8px short, which shows as a sliver of
+ * page at the handover.
  *
- * Clicking another tile mid-flight restarts cleanly: the timers are cleared and
- * the new tile takes over, so the overlay can never be left stranded.
+ * The polling window must outlast the Reveal transition, so the stability test
+ * is deliberately generous: 10 consecutive unchanged frames (~160ms) rather
+ * than 2-4, which was satisfied while the element was still drifting.
+ */
+function whenPanelSettled(
+  panel: HTMLElement,
+  done: (rect: { top: number; left: number; width: number; height: number }) => void,
+  deadline = 1500
+) {
+  const started = performance.now();
+  let last = panel.getBoundingClientRect();
+  let stableFrames = 0;
+  let raf = 0;
+
+  const tick = () => {
+    const now = panel.getBoundingClientRect();
+    const moved =
+      Math.abs(now.top - last.top) > 0.2 ||
+      Math.abs(now.left - last.left) > 0.2 ||
+      Math.abs(now.width - last.width) > 0.2 ||
+      Math.abs(now.height - last.height) > 0.2;
+
+    last = now;
+    stableFrames = moved ? 0 : stableFrames + 1;
+
+    // 6 unchanged frames (~100ms) is enough now that nothing translates;
+    // this only needs to cover the scroll committing.
+    if (stableFrames >= 6 || performance.now() - started > deadline) {
+      done({ top: now.top, left: now.left, width: now.width, height: now.height });
+      return;
+    }
+    raf = requestAnimationFrame(tick);
+  };
+
+  raf = requestAnimationFrame(tick);
+  return () => cancelAnimationFrame(raf);
+}
+
+/**
+ * Grows the clicked tile into the destination panel and swaps it in with no
+ * visible seam.
  */
 export function useZoomToSection() {
   const [zooming, setZooming] = useState<ZoomState | null>(null);
@@ -69,69 +129,54 @@ export function useZoomToSection() {
 
   const zoomTo = useCallback(
     (tile: HeroTile, el: HTMLElement) => {
-      const target = document.getElementById(tile.target);
+      const section = document.getElementById(tile.target);
+      clearTimers();
+      if (!section) return;
 
-      const scroll = () => {
-        if (!target) return;
-        const behavior: ScrollBehavior =
-          reduce || !document.hasFocus() ? "instant" : "smooth";
-        // Cancel any scroll already in flight. Two smooth scrolls racing each
-        // other stop at whichever target loses the race, which strands the
-        // visitor between sections after a fast second click.
+      const jump = (behavior: ScrollBehavior) => {
+        // Cancel anything in flight: two smooth scrolls racing stop at
+        // whichever loses.
         window.scrollTo({ top: window.scrollY, behavior: "instant" });
-        target.scrollIntoView({ behavior, block: "start" });
+        section.scrollIntoView({ behavior, block: "start" });
       };
 
-      // Cancel anything still running so a fast second click takes over
-      // instead of racing the first one.
-      clearTimers();
-
-      if (reduce || !target) {
+      if (reduce) {
         setZooming(null);
-        scroll();
+        jump(document.hasFocus() ? "smooth" : "instant");
         return;
       }
 
-      const r = el.getBoundingClientRect();
+      const start = rectOf(el);
+      const panel = panelFor(section);
 
-      // The window grows from the tile into a frame that stops short of the
-      // viewport edge: "almost fullscreen" reads as a window you opened, while
-      // an edge-to-edge fill just reads as the page changing colour.
-      const inset = window.innerWidth < 640 ? 10 : 24;
-      const end = {
-        top: inset,
-        left: inset,
-        width: window.innerWidth - inset * 2,
-        height: window.innerHeight - inset * 2,
-      };
-
-      const base = {
-        start: { top: r.top, left: r.left, width: r.width, height: r.height },
-        end,
+      // The window opens from the tile; the cover is up and opaque from this
+      // first frame, so the page can move without being seen.
+      setZooming({
+        start,
+        end: start,
         accent: tile.accent,
         label: tile.label,
-        meta: tile.meta,
-      };
+        phase: "grow",
+      });
 
-      setZooming({ ...base, phase: "zoom" });
+      jump("instant");
 
-      timers.current.push(
-        window.setTimeout(() => {
-          scroll();
-          setZooming({ ...base, phase: "hold" });
-          timers.current.push(
-            window.setTimeout(() => {
-              setZooming({ ...base, phase: "fade" });
-              timers.current.push(
-                window.setTimeout(() => setZooming(null), FADE_MS)
-              );
-            }, HOLD_MS)
-          );
-        }, ZOOM_MS)
-      );
+      // Wait for the destination to stop moving — the scroll settles first,
+      // then its `Reveal` finishes drifting ~8px. Measuring before that drifts
+      // to a stop is what made the window land short.
+      whenPanelSettled(panel, (end) => {
+        setZooming({ start, end, accent: tile.accent, label: tile.label, phase: "grow" });
+
+        timers.current.push(
+          window.setTimeout(() => {
+            setZooming({ start, end, accent: tile.accent, label: tile.label, phase: "release" });
+            timers.current.push(window.setTimeout(() => setZooming(null), RELEASE_MS));
+          }, GROW_MS)
+        );
+      });
     },
     [reduce, clearTimers]
   );
 
-  return { zoomTo, zooming, ZOOM_MS, HOLD_MS, FADE_MS };
+  return { zoomTo, zooming, GROW_MS, RELEASE_MS };
 }

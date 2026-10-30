@@ -89,11 +89,11 @@ function Tile({
  * reference: chrome with traffic lights, a sidebar, and a grid of cards.
  *
  * The tilt follows the pointer through CSS custom properties on the wrapper
- * rather than React state â€” a mousemove re-render per frame is exactly the
+ * rather than React state Ã¢â‚¬â€ a mousemove re-render per frame is exactly the
  * kind of thing that makes an otherwise smooth page feel janky.
  */
 export function HeroWindow() {
-  const { zoomTo, zooming, ZOOM_MS, FADE_MS } = useZoomToSection();
+  const { zoomTo, zooming, GROW_MS, RELEASE_MS } = useZoomToSection();
   const reduce = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -196,53 +196,44 @@ export function HeroWindow() {
       </div>
 
       {/*
-        The transition window.
+        The transition layer.
 
-        The old version scaled the flat card up to fill the screen, so text
-        stretched and the accent wash read as a colour flash. This instead
-        grows a real window — chrome, traffic lights, title bar — from the
-        tile's exact rect to a near-fullscreen frame, and cross-fades its body
-        into the destination section.
+        The window grows from the tile's rect straight onto the destination
+        panel's rect — the same box the real panel occupies once the page has
+        jumped — so the handover is a swap at identical pixels. The cover
+        behind it is opaque from the first frame, which is what lets the page
+        jump without being seen.
 
-        `width`/`height` are animated rather than `scale` so the type stays at
-        its true size the whole way; only the frame moves. `fixed` keeps it
-        immune to the window's tilt and to any ancestor transform.
+        `top/left/width/height` are animated rather than `scale` so type stays
+        at its true size; `fixed` keeps it clear of the hero window's tilt.
       */}
       <AnimatePresence>
         {zooming && (
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6"
-            initial={{ opacity: 1, backgroundColor: "rgb(0 0 0 / 0.28)" }}
-            animate={{
-              // Only the fade phase dims the scrim; the window itself is
-              // opaque from the first frame, so the page never shows through
-              // the frame while it is opening.
-              opacity: zooming.phase === "fade" ? 0 : 1,
-            }}
-            exit={{ opacity: 0, transition: { duration: 0.18 } }}
-            transition={{ duration: FADE_MS / 1000, ease: "easeInOut" }}
+            className="pointer-events-none fixed inset-0 z-[80] bg-bg"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: zooming.phase === "release" ? 0 : 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.16 } }}
+            transition={{ duration: RELEASE_MS / 1000, ease: "easeInOut" }}
           >
             <motion.div
-              className="fixed overflow-hidden rounded-[18px] border border-separator bg-bg shadow-[0_40px_120px_-20px_rgb(0_0_0/0.55)]"
-              // Start exactly on the tile and grow outward to the near-
-              // fullscreen frame, so the eye tracks one object rather than two
-              // cross-fading ones.
+              className="fixed overflow-hidden rounded-[20px] border border-separator bg-bg shadow-[0_30px_90px_-24px_rgb(0_0_0/0.4)]"
               initial={{
                 top: zooming.start.top,
                 left: zooming.start.left,
                 width: zooming.start.width,
                 height: zooming.start.height,
-                borderRadius: 14,
+                borderRadius: 12,
               }}
               animate={{
                 top: zooming.end.top,
                 left: zooming.end.left,
                 width: zooming.end.width,
                 height: zooming.end.height,
-                borderRadius: 18,
+                borderRadius: 20,
               }}
-              transition={{ duration: ZOOM_MS / 1000, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: GROW_MS / 1000, ease: [0.22, 1, 0.36, 1] }}
             >
               <span
                 aria-hidden="true"
@@ -258,31 +249,6 @@ export function HeroWindow() {
                 <span className="truncate text-[13.5px] font-semibold text-label">
                   {zooming.label}
                 </span>
-              </div>
-              <div className="flex h-[calc(100%-52px)] flex-col items-center justify-center gap-2 px-6 text-center">
-                <motion.span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: zooming.accent }}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.16, duration: 0.28, ease: "easeOut" }}
-                />
-                <motion.span
-                  className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold tracking-[-0.02em] text-label"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.3, ease: "easeOut" }}
-                >
-                  {zooming.label}
-                </motion.span>
-                <motion.span
-                  className="text-[13px] text-label-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.28, duration: 0.26 }}
-                >
-                  {zooming.meta}
-                </motion.span>
               </div>
             </motion.div>
           </motion.div>

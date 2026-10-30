@@ -4,14 +4,15 @@ import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 /**
- * Fade + 8px rise as the element enters the viewport, once.
+ * Fade-only entrance for below-the-fold content.
  *
- * Only `opacity` and `translateY` are animated, both compositor-friendly, and
- * `once: true` means the observer disconnects after the first pass instead of
- * re-triggering on every scroll direction change.
+ * It deliberately does NOT translate: the hero's window transition measures a
+ * destination panel's rect and lands on it, and a rising panel moved during
+ * that measurement, so the window landed 8px short. Opacity alone cannot move
+ * layout, which is what makes the landing exact.
  *
- * With reduced motion the children are returned untouched — no wrapper, no
- * transform, no opacity animation to get stuck at zero.
+ * Only `opacity` is animated and `once: true` disconnects the observer after
+ * the first pass. With reduced motion the children are returned untouched.
  */
 export function Reveal({
   children,
@@ -29,10 +30,10 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 8 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.4, ease: "easeOut", delay }}
+      transition={{ duration: 0.35, ease: "easeOut", delay }}
     >
       {children}
     </motion.div>

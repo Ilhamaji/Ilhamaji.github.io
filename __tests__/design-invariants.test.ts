@@ -497,21 +497,38 @@ describe("hero window", () => {
     }
   });
 
-  it("sequences the zoom before the scroll", () => {
-    // Firing both at once makes the tile explode and vanish mid-flight.
+  it("never translates the reveal, so measurements stay stable", () => {
+    // This is the root cause of the 8px seam, pinned. The hero transition
+    // measures the destination panel's rect and lands on it; a Reveal that
+    // rose by 8px moved that panel mid-measurement, so the window landed
+    // short and a sliver of page showed at the handover.
+    const src = read("components/reveal.tsx");
+    // Strip comments first: the explanatory prose mentions translate/opacity
+    // and would otherwise trip the very assertions meant to guard the code.
+    const code = src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    expect(code).not.toMatch(/[{,\s]y:\s*-?\d/);
+    expect(code).not.toMatch(/translate[XY]?:/);
+    expect(code).toMatch(/initial=\{\{ opacity: 0 \}\}/);
+    expect(code).toMatch(/whileInView=\{\{ opacity: 1 \}\}/);
+  });
+
+  it("waits for the destination to stop moving before measuring", () => {
+    // Measured, not theorised: scrollIntoView commits the scroll first, then
+    // the section's own Reveal drifts the panel ~8px over ~400ms. Measuring
+    // before that settled made the window land 8px short and the seam showed.
     const src = tiles();
-    const zoomIdx = src.indexOf("setZooming(");
-    const timeoutIdx = src.indexOf("window.setTimeout");
-    const scrollIdx = src.indexOf("scroll()", timeoutIdx);
-    expect(zoomIdx).toBeGreaterThan(-1);
-    expect(timeoutIdx).toBeGreaterThan(zoomIdx);
-    expect(scrollIdx).toBeGreaterThan(timeoutIdx);
+    expect(src).toMatch(/function whenPanelSettled/);
+    expect(src).toMatch(/requestAnimationFrame\(tick\)/);
+    // A deadline so a pathological layout still finishes.
+    expect(src).toMatch(/deadline/);
+    // The arithmetic shortcut must not come back.
+    expect(src).not.toMatch(/function finalRect/);
+    expect(src).not.toMatch(/destinationScrollY/);
   });
 
   it("grows a window frame instead of scaling the flat card", () => {
     // Scaling the card stretched its text and read as a colour flash. The
-    // transition measures the tile, then animates a real window frame
-    // (width/height/top/left) toward a near-fullscreen rect.
+    // transition animates a real window frame (top/left/width/height) instead.
     const src = window_();
     expect(src).toMatch(/zooming\.start\.top/);
     expect(src).toMatch(/zooming\.end\.top/);
@@ -521,35 +538,42 @@ describe("hero window", () => {
     expect(src).toMatch(/bg-\[#ff5f57\]/);
   });
 
-  it("stops short of the viewport edge so it reads as a window", () => {
-    // Edge-to-edge fill reads as the page changing colour, not as a window
-    // being opened.
+  it("lands on the destination panel, not on a viewport-sized frame", () => {
     const src = tiles();
-    expect(src).toMatch(/const inset =/);
-    expect(src).toMatch(/window\.innerWidth - inset \* 2/);
-    expect(src).toMatch(/window\.innerHeight - inset \* 2/);
+    expect(src).toMatch(/function panelFor/);
+    expect(src).toMatch(/data-section-window/);
+    expect(src).not.toMatch(/const inset =/);
+    expect(src).not.toMatch(/window\.innerWidth - inset/);
+  });
+
+  it("marks every section window so the transition can find it", () => {
+    expect(read("components/section-window.tsx")).toMatch(/data-section-window=""/);
   });
 
   it("is opaque from the first frame", () => {
-    // An opacity that starts at 0 lets the page show through the frame while
-    // it opens.
+    // The cover has to hide the page jump; anything translucent shows it.
     const src = window_();
-    expect(src).toMatch(/initial=\{\{ opacity: 1/);
+    expect(src).toMatch(/initial=\{\{ opacity: 1 \}\}/);
+    expect(src).toMatch(/bg-bg/);
   });
 
   it("renders the destination title inside the frame", () => {
     expect(window_()).toMatch(/\{zooming\.label\}/);
   });
 
-  it("runs three distinct phases, not one cut-off scale", () => {
-    // zoom -> hold (title on screen) -> fade over the already-scrolled page.
+  it("runs two phases: grow onto the panel, then release", () => {
+    // The old three-phase version had a dead gap: the fade ran with nothing
+    // moving on screen.
     const src = tiles();
-    expect(src).toMatch(/phase: "zoom"/);
-    expect(src).toMatch(/phase: "hold"/);
-    expect(src).toMatch(/phase: "fade"/);
-    expect(src).toMatch(/ZOOM_MS/);
-    expect(src).toMatch(/HOLD_MS/);
-    expect(src).toMatch(/FADE_MS/);
+    expect(src).toMatch(/phase: "grow"/);
+    expect(src).toMatch(/phase: "release"/);
+    expect(src).toMatch(/GROW_MS/);
+    expect(src).toMatch(/RELEASE_MS/);
+    // The stale timings must be gone, not merely unused.
+    expect(src).not.toMatch(/ZOOM_MS/);
+    expect(src).not.toMatch(/HOLD_MS/);
+    expect(src).not.toMatch(/FADE_MS/);
+    expect(src).not.toMatch(/SETTLE_MS/);
   });
 
   it("cancels a scroll already in flight on a second click", () => {
@@ -570,7 +594,8 @@ describe("hero window", () => {
 
   it("skips the zoom when reduced motion is requested", () => {
     expect(tiles()).toMatch(/useReducedMotion/);
-    expect(tiles()).toMatch(/if \(reduce \|\| !target\)/);
+    expect(tiles()).toMatch(/if \(reduce\)/);
+    expect(tiles()).toMatch(/setZooming\(null\)/);
   });
 
   it("clears in-flight timers on unmount", () => {

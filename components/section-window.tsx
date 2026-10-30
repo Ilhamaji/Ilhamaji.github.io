@@ -32,6 +32,9 @@ export function SectionWindow({
 }) {
   return (
     <div
+      // The hero's travelling window measures this element to land on it, so
+      // the handover happens at identical pixels. Keep the marker.
+      data-section-window=""
       className={cn(
         "overflow-hidden rounded-[20px] border border-separator bg-surface/75 backdrop-blur-xl backdrop-saturate-150",
         "shadow-[0_1px_2px_rgb(0_0_0/0.05),0_24px_60px_-12px_rgb(0_0_0/0.16)]",
