@@ -698,7 +698,16 @@ describe("section windows", () => {
   });
 
   it("hides the traffic lights from assistive tech", () => {
-    expect(read("components/section-window.tsx")).toMatch(/aria-hidden="true"/);
+    // The chrome lives in one shared component now, used by both the section
+    // panels and the travelling window.
+    expect(read("components/mac-window-chrome.tsx")).toMatch(/aria-hidden="true"/);
+  });
+
+  it("draws no accent strip above the section", () => {
+    // The pop-up is the reference and shows the accent as a title-bar tint
+    // only. A coloured bar across the top was what made the panel and the
+    // window look like different objects at the handover.
+    expect(read("components/section-window.tsx")).not.toMatch(/h-\[3px\]/);
   });
 });
 

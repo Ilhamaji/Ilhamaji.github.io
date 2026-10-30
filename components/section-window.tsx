@@ -36,19 +36,21 @@ export function SectionWindow({
       // the handover happens at identical pixels. Keep the marker.
       data-section-window=""
       className={cn(
-        "overflow-hidden rounded-[20px] border border-separator bg-surface/75 backdrop-blur-xl backdrop-saturate-150",
-        "shadow-[0_1px_2px_rgb(0_0_0/0.05),0_24px_60px_-12px_rgb(0_0_0/0.16)]",
+        // Matched to the hero's travelling window, which is the reference:
+        // same opaque surface and same 16px corner. A translucent panel against
+        // an opaque window made the two look like different objects at the
+        // moment of handover.
+        "overflow-hidden rounded-[16px] border border-separator bg-bg",
+        "shadow-[0_30px_90px_-24px_rgb(0_0_0/0.45)]",
         className
       )}
     >
-      {accent && (
-        <span
-          aria-hidden="true"
-          className="block h-[3px] w-full"
-          style={{ background: accent }}
-        />
-      )}
-
+      {/*
+        No accent strip of its own: the pop-up window is the reference, and it
+        shows the accent as a tint on the title bar only. A coloured bar across
+        the top of the section was the one thing that made the panel and the
+        window look like different objects at the handover.
+      */}
       <MacWindowChrome title={title} subtitle={subtitle} accent={accent} />
 
       <div className={bare ? "" : "p-6 md:p-8"}>{children}</div>

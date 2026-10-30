@@ -54,8 +54,12 @@ export function MacWindowChrome({
         <span className="truncate text-[11.5px] text-label-2">{title}</span>
       </div>
 
-      {/* title, the only meaningful part */}
-      <div className="flex min-w-0 flex-1 items-baseline justify-center gap-2 sm:hidden">
+      {/*
+        Title on phones sits at the right edge, against the traffic lights on
+        the left: a centred title in a bar this narrow floated in the middle of
+        nowhere and read as a stray label rather than a window title.
+      */}
+      <div className="flex min-w-0 flex-1 items-baseline justify-end gap-2 sm:hidden">
         <span className="truncate text-[13px] font-semibold text-label">{title}</span>
       </div>
       <div className="hidden min-w-0 shrink-0 items-baseline gap-2 sm:flex">

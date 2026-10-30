@@ -239,7 +239,7 @@ export function HeroWindow() {
                 left: zooming.end.left,
                 width: zooming.end.width,
                 height: zooming.end.height,
-                borderRadius: zooming.phase === "release" ? 20 : 16,
+                borderRadius: 16,
                 // `origin` is the tile itself, so it must land instantly. The
                 // other two phases use their own durations — using GROW_MS for
                 // the release made the shrink take 460ms while the overlay was

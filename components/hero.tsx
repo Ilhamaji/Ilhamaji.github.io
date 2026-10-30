@@ -21,7 +21,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative px-6 pt-28 md:pt-32"
+      className="relative px-4 pt-24 sm:px-6 md:pt-32"
       aria-labelledby="hero-heading"
     >
       <div className="mx-auto max-w-3xl">
@@ -41,11 +41,16 @@ export function Hero() {
           Full-Stack Web Developer &amp; NLP Engineer
         </p>
 
-        <p className="mt-6 max-w-2xl text-[16px] leading-relaxed text-label-2">
+        {/*
+          On phones the full bio pushed the window below the fold: eight lines
+          of text before anything interactive. Clamped to three lines there and
+          left intact from the tablet breakpoint up, where it has room.
+        */}
+        <p className="mt-6 line-clamp-3 max-w-2xl text-[15.5px] leading-relaxed text-label-2 md:line-clamp-none md:text-[16px]">
           {BIO}
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center gap-3 md:mt-10">
           <GlassButton href="#projects" variant="primary">
             View projects
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -62,7 +67,7 @@ export function Hero() {
         rising out of the bottom edge, the way the reference does. The negative
         bottom margin pulls the next section up so no dead band is left behind.
       */}
-      <div className="relative mx-auto mt-16 max-w-4xl md:mt-20">
+      <div className="relative mx-auto mt-10 max-w-4xl sm:mt-16 md:mt-20">
         <HeroWindow />
       </div>
     </section>
