@@ -49,7 +49,10 @@ export function SectionWindow({
         />
       )}
 
-      <div className="flex items-center gap-3 border-b border-separator px-4 py-3">
+      <div
+        data-window-chrome=""
+        className="flex items-center gap-3 border-b border-separator px-4 py-3"
+      >
         <div aria-hidden="true" className="flex shrink-0 items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />

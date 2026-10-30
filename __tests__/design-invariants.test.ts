@@ -512,25 +512,45 @@ describe("hero window", () => {
     expect(code).toMatch(/whileInView=\{\{ opacity: 1 \}\}/);
   });
 
-  it("waits for the destination to stop moving before measuring", () => {
-    // Measured, not theorised: scrollIntoView commits the scroll first, then
-    // the section's own Reveal drifts the panel ~8px over ~400ms. Measuring
-    // before that settled made the window land 8px short and the seam showed.
+  it("paints on the tile, jumps, then grows onto the panel", () => {
+    // The order is the effect. Jumping before painting scrolled the card away
+    // before the window moved, so it appeared to grow out of nowhere —
+    // measured: scrollY was already 979 in the first sampled frame.
     const src = tiles();
-    expect(src).toMatch(/function whenPanelSettled/);
-    expect(src).toMatch(/requestAnimationFrame\(tick\)/);
-    // A deadline so a pathological layout still finishes.
-    expect(src).toMatch(/deadline/);
-    // The arithmetic shortcut must not come back.
+    const originIdx = src.indexOf('phase: "origin"');
+    const jumpIdx = src.indexOf('jump("instant")');
+    const growIdx = src.indexOf('phase: "grow"');
+    expect(originIdx).toBeGreaterThan(-1);
+    expect(jumpIdx).toBeGreaterThan(originIdx);
+    expect(growIdx).toBeGreaterThan(jumpIdx);
+  });
+
+  it("grows onto the panel, never to a fullscreen frame", () => {
+    // Approach A, as agreed: the window is never larger than the section it
+    // stands for. A viewport-sized phase was tried and is wrong for this design.
+    const src = tiles();
+    expect(src).not.toMatch(/viewportFrame/);
+    expect(src).toMatch(/const rect = rectOf\(panel\)/);
+    expect(src).toMatch(/setZooming\(\{ \.\.\.base, end: rect, phase: "grow" \}\)/);
+  });
+
+  it("measures the panel one frame after the jump", () => {
+    // Reveal only fades now, so there is no drift to wait out; polling for
+    // stability added a ~300ms dead pause before the landing began.
+    const src = tiles();
+    const jumpIdx = src.indexOf('jump("instant")');
+    const measureIdx = src.indexOf("const rect = rectOf(panel)");
+    expect(measureIdx).toBeGreaterThan(jumpIdx);
+    expect(src).toMatch(/requestAnimationFrame\(\(\) => \{/);
+    // The old polling helper must not come back.
+    expect(src).not.toMatch(/function whenPanelSettled/);
     expect(src).not.toMatch(/function finalRect/);
-    expect(src).not.toMatch(/destinationScrollY/);
   });
 
   it("grows a window frame instead of scaling the flat card", () => {
     // Scaling the card stretched its text and read as a colour flash. The
     // transition animates a real window frame (top/left/width/height) instead.
     const src = window_();
-    expect(src).toMatch(/zooming\.start\.top/);
     expect(src).toMatch(/zooming\.end\.top/);
     expect(src).toMatch(/zooming\.end\.width/);
     expect(src).not.toMatch(/scale: zooming\.scale/);

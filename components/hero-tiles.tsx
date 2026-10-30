@@ -42,7 +42,8 @@ export const HERO_TILES: HeroTile[] = [
  * short and the handover showed a sliver of the page.
  */
 const GROW_MS = 460;
-const RELEASE_MS = 220;
+const RELEASE_MS = 260;
+/** How long the full-screen window holds before shrinking onto the panel. */
 
 export type ZoomState = {
   /** Where the window starts: the tile's own rect. */
@@ -53,7 +54,11 @@ export type ZoomState = {
   target: string;
   accent: string;
   label: string;
-  phase: "grow" | "release";
+  /**
+   * `origin` holds the window on the tile for one frame, `grow` expands it to
+   * the viewport, `release` shrinks it onto the destination panel.
+   */
+  phase: "origin" | "grow" | "release";
 };
 
 function panelFor(section: HTMLElement): HTMLElement {
@@ -64,75 +69,6 @@ function rectOf(el: HTMLElement) {
   const r = el.getBoundingClientRect();
   return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
-
-/**
- * Waits until the panel's rect has stopped moving, then reports it.
- *
- * Two things move after `scrollIntoView`: the scroll offset, and the section's
- * own `Reveal` (a fade-and-rise lasting ~400ms). A measurement taken while
- * either is in flight lands the window ~8px short, which shows as a sliver of
- * page at the handover.
- *
- * The polling window must outlast the Reveal transition, so the stability test
- * is deliberately generous: 10 consecutive unchanged frames (~160ms) rather
- * than 2-4, which was satisfied while the element was still drifting.
- */
-function whenPanelSettled(
-  panel: HTMLElement,
-  done: (rect: { top: number; left: number; width: number; height: number }) => void,
-  deadline = 900
-) {
-  let last = panel.getBoundingClientRect();
-  let stableFrames = 0;
-  let raf = 0;
-  let finished = false;
-
-  const report = (el: DOMRect) => {
-    if (finished) return;
-    finished = true;
-    cancelAnimationFrame(raf);
-    clearTimeout(fallback);
-    done({ top: el.top, left: el.left, width: el.width, height: el.height });
-  };
-
-  const tick = () => {
-    if (finished) return;
-    const now = panel.getBoundingClientRect();
-    const moved =
-      Math.abs(now.top - last.top) > 0.2 ||
-      Math.abs(now.left - last.left) > 0.2 ||
-      Math.abs(now.width - last.width) > 0.2 ||
-      Math.abs(now.height - last.height) > 0.2;
-
-    last = now;
-    stableFrames = moved ? 0 : stableFrames + 1;
-
-    // 6 unchanged frames (~100ms) is enough: nothing translates any more, this
-    // only needs to cover the scroll committing.
-    if (stableFrames >= 6) {
-      report(now);
-      return;
-    }
-    raf = requestAnimationFrame(tick);
-  };
-
-  // The deadline cannot live inside `tick`: requestAnimationFrame stops firing
-  // in background tabs and in some embedded contexts, and then the transition
-  // would hang on the tile forever instead of completing. A timer guarantees
-  // the handover happens even if no frame ever arrives.
-  const fallback = window.setTimeout(() => {
-    report(panel.getBoundingClientRect());
-  }, deadline);
-
-  raf = requestAnimationFrame(tick);
-
-  return () => {
-    finished = true;
-    cancelAnimationFrame(raf);
-    clearTimeout(fallback);
-  };
-}
-
 /**
  * Grows the clicked tile into the destination panel and swaps it in with no
  * visible seam.
@@ -172,45 +108,60 @@ export function useZoomToSection() {
 
       const start = rectOf(el);
       const panel = panelFor(section);
-
-      // The window opens from the tile; the cover is up and opaque from this
-      // first frame, so the page can move without being seen.
-      setZooming({
+      const base = {
         start,
         end: start,
         target: tile.target,
         accent: tile.accent,
         label: tile.label,
-        phase: "grow",
-      });
+      } as const;
 
-      jump("instant");
+      // The whole effect depends on this order:
+      //
+      //   1. paint the window on the tile, where the visitor is looking;
+      //   2. grow it to fill the viewport while the page has NOT moved, so the
+      //      window visibly opens out of the card they clicked;
+      //   3. then jump the page, hidden behind the full-size window;
+      //   4. measure the destination once it has settled, and shrink onto it.
+      //
+      // Jumping first (the obvious order, and what this used to do) left the
+      // card already scrolled off-screen, so the window appeared to grow out of
+      // nowhere and the sequence read as a jump rather than a transition.
+      setZooming({ ...base, phase: "origin" });
 
-      // Wait for the destination to stop moving — the scroll settles first,
-      // then its `Reveal` finishes drifting ~8px. Measuring before that drifts
-      // to a stop is what made the window land short.
-      whenPanelSettled(panel, (end) => {
-        // A panel can be far taller than the screen (on mobile a section is a
-        // column of cards ~2000px tall). Chasing its full height would drag the
-        // window off-screen instead of settling onto it, so the landing height
-        // is clamped to the viewport; the width and horizontal position still
-        // match exactly, which is what the eye reads at the handover.
-        const maxHeight = window.innerHeight - 16;
-        const landing = {
-          ...end,
-          top: Math.min(Math.max(end.top, 8), maxHeight - 8),
-          height: Math.min(end.height, maxHeight - Math.max(end.top, 8)),
-        };
+      // Approach A, as agreed when the prototypes were reviewed:
+      //
+      //   1. paint the window on the tile;
+      //   2. jump the page while the window is still small and the veil hides
+      //      it, so the destination ends up where it will stay;
+      //   3. grow the window ONTO the panel's rect â€” same size, same position;
+      //   4. dissolve, with the real panel already in that exact box.
+      //
+      // No fullscreen phase: the window is never larger than the section it
+      // stands for, and it lands on the panel rather than filling the screen
+      // and then shrinking back.
+      setZooming({ ...base, phase: "origin" });
 
-        setZooming({ start, end: landing, target: tile.target, accent: tile.accent, label: tile.label, phase: "grow" });
+      timers.current.push(
+        window.setTimeout(() => {
+          jump("instant");
 
-        timers.current.push(
-          window.setTimeout(() => {
-            setZooming({ start, end: landing, target: tile.target, accent: tile.accent, label: tile.label, phase: "release" });
-            timers.current.push(window.setTimeout(() => setZooming(null), RELEASE_MS));
-          }, GROW_MS)
-        );
-      });
+          // One frame later the scroll has committed and the panel sits at its
+          // final position. `Reveal` only fades now, so there is no drift to
+          // wait out and no dead pause before the move starts.
+          requestAnimationFrame(() => {
+            const rect = rectOf(panel);
+            setZooming({ ...base, end: rect, phase: "grow" });
+
+            timers.current.push(
+              window.setTimeout(() => {
+                setZooming({ ...base, end: rect, phase: "release" });
+                timers.current.push(window.setTimeout(() => setZooming(null), RELEASE_MS));
+              }, GROW_MS)
+            );
+          });
+        }, 16)
+      );
     },
     [reduce, clearTimers]
   );

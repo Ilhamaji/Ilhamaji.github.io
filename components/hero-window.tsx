@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { HERO_TILES, useZoomToSection, type HeroTile } from "@/components/hero-tiles";
 import { TilePreview } from "@/components/tile-previews";
 import { MacWindowChrome } from "@/components/mac-window-chrome";
+import { SectionClone } from "@/components/section-clone";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
 
@@ -94,7 +95,7 @@ function Tile({
  * kind of thing that makes an otherwise smooth page feel janky.
  */
 export function HeroWindow() {
-  const { zoomTo, zooming, GROW_MS } = useZoomToSection();
+  const { zoomTo, zooming, GROW_MS, RELEASE_MS } = useZoomToSection();
   const reduce = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -228,22 +229,28 @@ export function HeroWindow() {
               transition={{ duration: 0.2, ease: "easeOut" }}
             />
             <motion.div
-              className="fixed overflow-hidden rounded-[20px] border border-separator bg-bg shadow-[0_30px_90px_-24px_rgb(0_0_0/0.4)]"
-              initial={{
-                top: zooming.start.top,
-                left: zooming.start.left,
-                width: zooming.start.width,
-                height: zooming.start.height,
-                borderRadius: 12,
-              }}
-              animate={{
+              className="fixed overflow-hidden border border-separator bg-bg shadow-[0_30px_90px_-24px_rgb(0_0_0/0.4)]"
+              data-transition-window=""
+              style={{
                 top: zooming.end.top,
                 left: zooming.end.left,
                 width: zooming.end.width,
                 height: zooming.end.height,
-                borderRadius: 20,
+                borderRadius: zooming.phase === "release" ? 20 : 16,
+                // `origin` is the tile itself, so it must land instantly. The
+                // other two phases use their own durations — using GROW_MS for
+                // the release made the shrink take 460ms while the overlay was
+                // torn down after 260ms, so the window vanished mid-flight and
+                // never actually reached the panel.
+                transitionProperty: "top, left, width, height, border-radius",
+                transitionDuration:
+                  zooming.phase === "origin"
+                    ? "0ms"
+                    : zooming.phase === "release"
+                      ? `${RELEASE_MS}ms`
+                      : `${GROW_MS}ms`,
+                transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               }}
-              transition={{ duration: GROW_MS / 1000, ease: [0.22, 1, 0.36, 1] }}
             >
               <MacWindowChrome accent={zooming.accent} title={zooming.label} />
               {/*
@@ -256,14 +263,21 @@ export function HeroWindow() {
                 the same information at a size that fits the animation.
               */}
               <motion.div
-                className="flex h-[calc(100%-56px)] items-center justify-center overflow-hidden p-4"
+                className="h-[calc(100%-56px)] overflow-hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.22, ease: "easeOut", delay: 0.1 }}
+                transition={{ duration: 0.2, ease: "easeOut", delay: 0.08 }}
               >
-                <div className="w-full max-w-md">
-                  <TilePreview target={zooming.target} />
-                </div>
+                {/*
+                  The real section, cloned from the live DOM.
+
+                  Cloning rather than re-rendering the same components keeps the
+                  two identical by construction: whatever the section looks like
+                  on the page is what the window shows, with no second copy of
+                  the markup to drift out of sync. The clone is inert — it is
+                  inside an aria-hidden, pointer-events-none layer.
+                */}
+                <SectionClone target={zooming.target} />
               </motion.div>
             </motion.div>
           </motion.div>
