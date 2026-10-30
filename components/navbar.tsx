@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { GlassButton } from "@/components/glass/ui";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -253,14 +254,21 @@ export function Navbar() {
         items stacked on top of the page content. Keeping it outside the
         blurred element is what lets `fixed inset-0` mean the viewport again.
       */}
+      <AnimatePresence>
       {open && (
-        <div
+        <motion.div
           id="mobile-menu"
           ref={sheetRef}
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
           className="fixed inset-0 z-[60] flex flex-col bg-bg px-6 pb-8 pt-4 md:hidden"
+          // Drops from above rather than appearing: a sheet that pops into
+          // existence reads as a page swap, not as a menu opening.
+          initial={{ y: "-100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "-100%" }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="flex items-center justify-between">
             <span className="text-[17px] font-semibold tracking-[-0.02em] text-label">
@@ -272,16 +280,34 @@ export function Navbar() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-separator bg-surface-2 text-label"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-separator bg-surface-2 text-label transition-transform duration-200 active:scale-90"
               >
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          <ul className="mt-6 flex flex-1 flex-col overflow-y-auto">
+          <motion.ul
+            className="mt-6 flex flex-1 flex-col overflow-y-auto"
+            // Staggered children so the menu reads as unfolding rather than
+            // arriving all at once. Delay is reset on close by removing the
+            // subtree.
+            initial="hidden"
+            animate="shown"
+            variants={{
+              hidden: {},
+              shown: { transition: { staggerChildren: 0.045, delayChildren: 0.08 } },
+            }}
+          >
             {NAV.map((item) => (
-              <li key={item.id} className="border-b border-separator">
+              <motion.li
+                key={item.id}
+                className="border-b border-separator"
+                variants={{
+                  hidden: { opacity: 0, y: -8 },
+                  shown: { opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" } },
+                }}
+              >
                 <a
                   href={`#${item.id}`}
                   onClick={(e) => goTo(item.id, e)}
@@ -293,11 +319,16 @@ export function Navbar() {
                 >
                   {item.label}
                 </a>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
 
-          <div className="mt-6">
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: "easeOut", delay: 0.32 }}
+          >
             <GlassButton
               href="#contact"
               variant="primary"
@@ -306,9 +337,10 @@ export function Navbar() {
             >
               Hire me
             </GlassButton>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 }

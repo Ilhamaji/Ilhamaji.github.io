@@ -24,6 +24,7 @@ export function MacWindowChrome({
 }) {
   return (
     <div
+      data-window-chrome=""
       className="relative flex h-14 shrink-0 items-center gap-3 border-b border-separator px-3"
       style={{ background: accent ? `${accent}0d` : undefined }}
     >

@@ -2,16 +2,16 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { MacWindowChrome } from "@/components/mac-window-chrome";
 
 /**
- * Wraps a section in desktop-window chrome, matching the hero window.
+ * Wraps a section in desktop-window chrome.
  *
- * Every section uses this so the whole page reads as one metaphor: the hero
- * window is the launcher, and each destination is a window too.
- *
- * The traffic lights are decorative and hidden from assistive tech; the
- * `title` is the only part that carries meaning, so it is rendered as real
- * text rather than an icon.
+ * This and the hero's travelling window share `MacWindowChrome`, so a section
+ * looks the same before and after the transition lands on it. Keeping the two
+ * title bars in sync was previously a manual job and they had already drifted:
+ * the section had plain traffic lights while the transition window had the full
+ * macOS toolbar.
  */
 export function SectionWindow({
   title,
@@ -23,7 +23,7 @@ export function SectionWindow({
 }: {
   title: string;
   subtitle?: string;
-  /** Hex or CSS colour for the tiny leading dot and the top edge. */
+  /** Hex or CSS colour for the accent edge and the title-bar tint. */
   accent?: string;
   children: ReactNode;
   className?: string;
@@ -49,25 +49,7 @@ export function SectionWindow({
         />
       )}
 
-      <div
-        data-window-chrome=""
-        className="flex items-center gap-3 border-b border-separator px-4 py-3"
-      >
-        <div aria-hidden="true" className="flex shrink-0 items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-        </div>
-
-        <div className="flex min-w-0 items-baseline gap-2">
-          <span className="truncate text-[13.5px] font-semibold text-label">{title}</span>
-          {subtitle && (
-            <span className="hidden truncate text-[11.5px] text-label-2 sm:inline">
-              {subtitle}
-            </span>
-          )}
-        </div>
-      </div>
+      <MacWindowChrome title={title} subtitle={subtitle} accent={accent} />
 
       <div className={bare ? "" : "p-6 md:p-8"}>{children}</div>
     </div>

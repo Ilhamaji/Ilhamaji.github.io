@@ -41,8 +41,16 @@ export const HERO_TILES: HeroTile[] = [
  * `scrollIntoView` still reports the pre-scroll layout, so the window landed
  * short and the handover showed a sliver of the page.
  */
-const GROW_MS = 460;
-const RELEASE_MS = 260;
+const GROW_MS = 420;
+const RELEASE_MS = 300;
+/**
+ * Time for the veil to reach full strength before the page jumps.
+ *
+ * The jump MUST wait for this. Jumping while the veil was still fading let the
+ * visitor see the real section first, and the window then appeared on top of it
+ * — the sequence read backwards.
+ */
+const VEIL_MS = 220;
 /** How long the full-screen window holds before shrinking onto the panel. */
 
 export type ZoomState = {
@@ -116,39 +124,30 @@ export function useZoomToSection() {
         label: tile.label,
       } as const;
 
-      // The whole effect depends on this order:
-      //
-      //   1. paint the window on the tile, where the visitor is looking;
-      //   2. grow it to fill the viewport while the page has NOT moved, so the
-      //      window visibly opens out of the card they clicked;
-      //   3. then jump the page, hidden behind the full-size window;
-      //   4. measure the destination once it has settled, and shrink onto it.
-      //
-      // Jumping first (the obvious order, and what this used to do) left the
-      // card already scrolled off-screen, so the window appeared to grow out of
-      // nowhere and the sequence read as a jump rather than a transition.
-      setZooming({ ...base, phase: "origin" });
-
-      // Approach A, as agreed when the prototypes were reviewed:
-      //
-      //   1. paint the window on the tile;
-      //   2. jump the page while the window is still small and the veil hides
-      //      it, so the destination ends up where it will stay;
-      //   3. grow the window ONTO the panel's rect â€” same size, same position;
-      //   4. dissolve, with the real panel already in that exact box.
-      //
-      // No fullscreen phase: the window is never larger than the section it
-      // stands for, and it lands on the panel rather than filling the screen
-      // and then shrinking back.
+      /**
+       * Order, and why:
+       *
+       *  1. paint the window on the tile, where the visitor is already looking;
+       *  2. draw the veil at full strength — nothing has moved yet;
+       *  3. jump the page only once the veil is opaque, so the destination is
+       *     never glimpsed before the window exists over it;
+       *  4. grow the window onto the panel's measured rect;
+       *  5. dissolve, the real panel already occupying that exact box.
+       *
+       * Jumping while the veil was still fading (what this did before) is why
+       * the real section was visible first and the window then appeared over
+       * it — the sequence read backwards.
+       */
       setZooming({ ...base, phase: "origin" });
 
       timers.current.push(
         window.setTimeout(() => {
+          // The veil reaches full opacity in VEIL_MS; the jump waits for it.
           jump("instant");
 
-          // One frame later the scroll has committed and the panel sits at its
-          // final position. `Reveal` only fades now, so there is no drift to
-          // wait out and no dead pause before the move starts.
+          // A frame after the jump the scroll has committed and the panel sits
+          // at its final position. `Reveal` only fades now, so there is no
+          // drift to wait out.
           requestAnimationFrame(() => {
             const rect = rectOf(panel);
             setZooming({ ...base, end: rect, phase: "grow" });
@@ -160,11 +159,11 @@ export function useZoomToSection() {
               }, GROW_MS)
             );
           });
-        }, 16)
+        }, VEIL_MS)
       );
     },
     [reduce, clearTimers]
   );
 
-  return { zoomTo, zooming, GROW_MS, RELEASE_MS };
+  return { zoomTo, zooming, GROW_MS, RELEASE_MS, VEIL_MS };
 }

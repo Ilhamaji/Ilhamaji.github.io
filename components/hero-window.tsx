@@ -95,7 +95,7 @@ function Tile({
  * kind of thing that makes an otherwise smooth page feel janky.
  */
 export function HeroWindow() {
-  const { zoomTo, zooming, GROW_MS, RELEASE_MS } = useZoomToSection();
+  const { zoomTo, zooming, GROW_MS, RELEASE_MS, VEIL_MS } = useZoomToSection();
   const reduce = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -223,10 +223,13 @@ export function HeroWindow() {
             transition={{ duration: 0.22, ease: "easeOut" }}
           >
             <motion.div
-              className="fixed inset-0 bg-bg/80 backdrop-blur-md"
+              // Opaque by the time the page jumps (VEIL_MS). A thinner veil let
+              // the real section show through first, so the window appeared to
+              // arrive after the destination — the sequence read backwards.
+              className="fixed inset-0 bg-bg/95 backdrop-blur-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              transition={{ duration: VEIL_MS / 1000, ease: "easeOut" }}
             />
             <motion.div
               className="fixed overflow-hidden border border-separator bg-bg shadow-[0_30px_90px_-24px_rgb(0_0_0/0.4)]"
