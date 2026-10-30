@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, Mail } from "lucide-react";
+import { Award, Calendar, Download, GraduationCap, Mail, MapPin } from "lucide-react";
 import { SECTION_ICONS, STACK } from "@/lib/section-icons";
 import { PROJECTS } from "@/lib/projects";
 import { EXPERIENCES } from "@/lib/experience";
@@ -8,65 +8,76 @@ import { EXPERIENCES } from "@/lib/experience";
 /**
  * Miniatures of the real sections, rendered inside the hero window's cards.
  *
- * These read the same data as the sections themselves (PROJECTS, STACK,
- * EXPERIENCES), so a tile cannot drift out of sync with what it links to. They
- * are deliberately non-interactive: the whole card is the button, and nested
- * links inside a button would be invalid HTML and confusing for screen readers.
+ * They are built from the exact same data modules as the destination sections
+ * (PROJECTS, STACK, EXPERIENCES), showing real names and shapes rather than
+ * abstract placeholder bars — so what you see in the card is an authentic
+ * scale-model of the destination.
  *
- * Everything here is `aria-hidden` — the card already carries its label, and
- * repeating a miniature's contents would double every word in the tab order.
+ * Everything is `aria-hidden` and inert: the card already carries its own
+ * accessible label, and repeating the miniature's copy would double every word
+ * in the screen reader's tab order.
  */
 
-const DOTS = [
-  "#0066d6",
-  "#7c3aed",
-  "#0f9d58",
-  "#e8710a",
-  "#0b8a9b",
-];
+const DOTS = ["#0066d6", "#e8710a", "#0b8a9b", "#7c3aed"];
 
-/** Projects: a 2x2 grid of tiny project cards, as the real section renders. */
+/** Projects: miniature project cards with tags, titles, and tech dots. */
 function ProjectsPreview() {
   return (
     <div className="grid grid-cols-2 gap-1.5">
       {PROJECTS.slice(0, 4).map((p, i) => (
         <div
           key={p.title}
-          className="rounded-[5px] border border-separator bg-surface p-1.5"
+          className="flex flex-col rounded-[6px] border border-separator bg-surface p-1.5"
         >
-          <span
-            className="mb-1 block h-[3px] w-5 rounded-full"
-            style={{ background: DOTS[i % DOTS.length] }}
-          />
-          <span className="block truncate text-[7px] font-semibold leading-tight text-label">
-            {p.tag}
+          <div className="flex items-center gap-1">
+            <span
+              className="h-1 w-1 rounded-full"
+              style={{ background: DOTS[i % DOTS.length] }}
+            />
+            <span className="truncate text-[6.5px] font-semibold uppercase tracking-wider text-label-2">
+              {p.tag}
+            </span>
+          </div>
+          <span className="mt-1 line-clamp-1 text-[7.5px] font-semibold leading-tight text-label">
+            {p.title}
           </span>
-          <span className="mt-0.5 block h-[3px] w-full rounded-full bg-label-3/40" />
-          <span className="mt-0.5 block h-[3px] w-2/3 rounded-full bg-label-3/40" />
+          <div className="mt-1 flex gap-0.5">
+            {p.tech.slice(0, 3).map((t) => (
+              <span
+                key={t}
+                className="h-2 rounded-[2px] bg-surface-2 px-1 text-[5.5px] font-medium text-label-2"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-/** Skills: the same tech marks, at miniature size. */
+/** Skills: brand icons on tiny tiles, laid out as a grid. */
 function SkillsPreview() {
   return (
-    <div className="grid grid-cols-4 gap-1.5">
+    <div className="grid grid-cols-4 gap-1">
       {STACK.slice(0, 8).map((name) => {
         const icon = SECTION_ICONS[name];
         return (
           <div
             key={name}
-            className="flex aspect-square items-center justify-center rounded-[5px] border border-separator bg-surface"
+            className="flex flex-col items-center justify-center rounded-[5px] border border-separator bg-surface p-1 text-center"
           >
             {icon ? (
               <icon.Icon className="h-3 w-3" style={{ color: icon.color }} />
             ) : (
-              <span className="text-[6px] font-bold text-label-2">
+              <span className="text-[6.5px] font-bold text-label-2">
                 {name.slice(0, 2)}
               </span>
             )}
+            <span className="mt-0.5 max-w-full truncate text-[5.5px] font-medium leading-none text-label-2">
+              {entry_label(name, icon?.label)}
+            </span>
           </div>
         );
       })}
@@ -74,89 +85,109 @@ function SkillsPreview() {
   );
 }
 
-/** Experience: timeline rows with a node and two text bars. */
+function entry_label(fallback: string, label?: string) {
+  return (label ?? fallback).slice(0, 6);
+}
+
+/** Experience: timeline with real roles and company tags. */
 function ExperiencePreview() {
   return (
-    <div className="space-y-1.5 border-l border-separator pl-2">
-      {EXPERIENCES.slice(0, 3).map((item, i) => (
+    <div className="space-y-1.5 border-l border-separator pl-2 pt-0.5">
+      {EXPERIENCES.slice(0, 2).map((item, i) => (
         <div key={`${item.role}-${i}`} className="relative">
           <span
             aria-hidden="true"
             className="absolute -left-[11px] top-1 h-1.5 w-1.5 rounded-full bg-accent"
           />
-          <span className="block truncate text-[7px] font-semibold leading-tight text-label">
+          <span className="block truncate text-[7.5px] font-semibold leading-tight text-label">
+            {item.role}
+          </span>
+          <span className="block truncate text-[6.5px] text-accent">
             {item.company}
           </span>
-          <span className="mt-0.5 block h-[3px] w-3/4 rounded-full bg-label-3/40" />
+          <span className="mt-0.5 inline-flex items-center gap-0.5 text-[5.5px] tabular-nums text-label-2">
+            <Calendar className="h-1.5 w-1.5" />
+            {item.period}
+          </span>
         </div>
       ))}
     </div>
   );
 }
 
-/** About: portrait plate, text lines, and the two fact chips. */
+/** About: bio preview with factual chips and CV button. */
 function AboutPreview() {
   return (
     <div className="space-y-1.5">
-      <div className="flex gap-1.5">
-        <span className="h-10 w-7 shrink-0 rounded-[5px] bg-accent/15" />
-        <div className="flex-1 space-y-1 pt-0.5">
-          {[100, 92, 76, 88].map((w, i) => (
-            <span
-              key={i}
-              className="block h-[3px] rounded-full bg-label-3/40"
-              style={{ width: `${w}%` }}
-            />
-          ))}
+      <p className="line-clamp-2 text-[7px] leading-tight text-label-2">
+        Full-Stack Web Developer &amp; NLP Engineer building scalable web apps and AI modules.
+      </p>
+      <div className="grid grid-cols-2 gap-1 text-[6px]">
+        <div className="rounded-[4px] bg-surface-2 p-1">
+          <span className="block uppercase text-label-2">Based in</span>
+          <span className="font-semibold text-label">Surakarta</span>
+        </div>
+        <div className="rounded-[4px] bg-surface-2 p-1">
+          <span className="block uppercase text-label-2">Cert</span>
+          <span className="font-semibold text-label">Bangkit</span>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-1">
-        {[0, 1].map((i) => (
-          <span
-            key={i}
-            className="block h-4 rounded-[4px] border border-separator bg-surface"
-          />
-        ))}
+      <div className="flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-accent-label">
+        <Download className="h-2 w-2" />
+        <span className="text-[6.5px] font-medium">Download CV</span>
       </div>
-      <span className="block h-3.5 w-2/3 rounded-full bg-accent/80" />
     </div>
   );
 }
 
-/** Education: a cap plate plus two degree rows. */
+/** Education: formal education degree cards with icons. */
 function EducationPreview() {
   return (
     <div className="space-y-1.5">
-      {[0, 1].map((i) => (
-        <div key={i} className="flex items-start gap-1.5">
-          <span className="grid h-4 w-4 shrink-0 place-items-center rounded-[4px] bg-accent/10 text-accent">
-            <GraduationCap className="h-2.5 w-2.5" />
+      <div className="flex items-start gap-1 rounded-[5px] border border-separator bg-surface p-1">
+        <span className="mt-0.5 grid h-3 w-3 shrink-0 place-items-center rounded-[3px] bg-accent/10 text-accent">
+          <GraduationCap className="h-2 w-2" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <span className="block truncate text-[7px] font-semibold leading-tight text-label">
+            Bachelor of Computer Science
           </span>
-          <div className="flex-1">
-            <span className="block h-[3px] w-full rounded-full bg-label-3/50" />
-            <span className="mt-0.5 block h-[3px] w-1/2 rounded-full bg-label-3/40" />
-          </div>
+          <span className="block truncate text-[6px] text-accent">
+            Universitas Tiga Serangkai
+          </span>
         </div>
-      ))}
+      </div>
+      <div className="flex items-start gap-1 rounded-[5px] border border-separator bg-surface p-1">
+        <span className="mt-0.5 grid h-3 w-3 shrink-0 place-items-center rounded-[3px] bg-accent/10 text-accent">
+          <Award className="h-2 w-2" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <span className="block truncate text-[7px] font-semibold leading-tight text-label">
+            Bangkit Academy Graduate
+          </span>
+          <span className="block truncate text-[6px] text-label-2">
+            Cloud Computing
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
 
-/** Contact: the email pill plus the three social plates. */
+/** Contact: heading, email button, and location pill. */
 function ContactPreview() {
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center gap-1 rounded-full bg-accent px-2 py-1">
-        <Mail className="h-2 w-2 text-accent-label" />
-        <span className="h-[3px] w-12 rounded-full bg-accent-label/80" />
+      <span className="block text-[8px] font-bold leading-tight tracking-tight text-label">
+        Let&apos;s make something good.
+      </span>
+      <div className="flex items-center gap-1 text-[6.5px] text-label-2">
+        <MapPin className="h-2 w-2 text-accent" />
+        <span>Surakarta, ID</span>
       </div>
-      <div className="flex gap-1">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="h-3.5 w-3.5 rounded-full border border-separator bg-surface-2"
-          />
-        ))}
+      <div className="flex items-center justify-center gap-1 rounded-full bg-accent px-2 py-1 text-accent-label">
+        <Mail className="h-2 w-2" />
+        <span className="text-[6.5px] font-medium">ilhmsap@gmail.com</span>
       </div>
     </div>
   );

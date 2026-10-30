@@ -60,7 +60,7 @@ function Tile({
               destination instead of only naming it. The fixed aspect keeps
               every card the same height regardless of how much content its
               preview has. */}
-          <div className="relative mb-2.5 min-h-[86px] overflow-hidden rounded-[8px] border border-separator bg-surface-2/60 p-2">
+          <div className="relative mb-2.5 min-h-[96px] overflow-hidden rounded-[8px] border border-separator bg-surface-2/60 p-2 sm:min-h-[104px]">
             <TilePreview target={tile.target} />
           </div>
 
@@ -137,9 +137,9 @@ export function HeroWindow() {
               transformStyle: "preserve-3d",
             }}
             className={cn(
-              "relative mx-auto w-full max-w-4xl overflow-hidden",
-              "rounded-t-[20px] border border-separator border-b-0 bg-surface/80 backdrop-blur-2xl",
-              "shadow-[0_-1px_0_rgb(255_255_255/0.05),0_24px_70px_rgb(0_0_0/0.22)]",
+              "relative mx-auto w-full max-w-5xl overflow-hidden",
+              "rounded-[16px] border border-separator bg-surface/75 backdrop-blur-xl",
+              "shadow-[0_30px_90px_-24px_rgb(0_0_0/0.45)]",
               "transition-transform duration-300 ease-out will-change-transform"
             )}
           >

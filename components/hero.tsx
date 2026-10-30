@@ -24,7 +24,7 @@ export function Hero() {
       className="relative px-4 pt-24 sm:px-6 md:pt-32"
       aria-labelledby="hero-heading"
     >
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-5xl">
         <Pill className="gap-2">
           <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />
           Open to work
@@ -60,15 +60,16 @@ export function Hero() {
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </GlassButton>
         </div>
-      </div>
 
-      {/*
-        The window is pushed down and clipped by the section so it reads as
-        rising out of the bottom edge, the way the reference does. The negative
-        bottom margin pulls the next section up so no dead band is left behind.
-      */}
-      <div className="relative mx-auto mt-10 max-w-4xl sm:mt-16 md:mt-20">
-        <HeroWindow />
+        {/*
+          The window shares max-w-5xl with every section below it, so the page
+          width no longer jumps between 768px in the hero and 1024px in the
+          sections. It is a complete window (four rounded corners, four
+          borders), not clipped at the bottom.
+        */}
+        <div className="relative mt-12 pb-14 sm:mt-16 sm:pb-16 md:mt-20 md:pb-20">
+          <HeroWindow />
+        </div>
       </div>
     </section>
   );
