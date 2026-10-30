@@ -62,6 +62,8 @@ export type ZoomState = {
   target: string;
   accent: string;
   label: string;
+  /** Eyebrow of the destination section, shown in the title bar. */
+  meta: string;
   /**
    * `origin` holds the window on the tile for one frame, `grow` expands it to
    * the viewport, `release` shrinks it onto the destination panel.
@@ -122,6 +124,7 @@ export function useZoomToSection() {
         target: tile.target,
         accent: tile.accent,
         label: tile.label,
+        meta: tile.meta,
       } as const;
 
       /**

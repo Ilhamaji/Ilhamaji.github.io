@@ -255,7 +255,11 @@ export function HeroWindow() {
                 transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
-              <MacWindowChrome accent={zooming.accent} title={zooming.label} />
+              <MacWindowChrome
+                accent={zooming.accent}
+                title={zooming.label}
+                subtitle={zooming.meta}
+              />
               {/*
                 The window shows the destination's miniature, scaled up as the
                 frame grows, then hands over to the real panel.
