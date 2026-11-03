@@ -56,15 +56,21 @@ function Tile({
             style={{ background: tile.accent }}
           />
 
-          {/* The miniature of the real section, so the card previews its
-              destination instead of only naming it. The fixed aspect keeps
-              every card the same height regardless of how much content its
-              preview has. */}
-          <div className="relative mb-2.5 min-h-[96px] overflow-hidden rounded-[8px] border border-separator bg-surface-2/60 p-2 sm:min-h-[104px]">
+          {/*
+            The miniature is desktop-only.
+
+            On a phone the card is ~170px wide and the miniature halves that
+            again; its project titles truncated to "AI Text Summarizer & PD…" at
+            7px. No font size makes a 30-character title readable in an 80px
+            box, so at this width the miniatures were noise rather than a
+            preview. Phones get a larger label instead, which is the part that
+            actually has to be read.
+          */}
+          <div className="relative mb-2.5 hidden min-h-[104px] overflow-hidden rounded-[8px] border border-separator bg-surface-2/60 p-2 [--pv:5.5px] sm:block">
             <TilePreview target={tile.target} />
           </div>
 
-          <span className="relative flex items-center gap-1.5 text-[12px] font-semibold text-label">
+          <span className="relative flex items-center gap-1.5 text-[14px] font-semibold text-label sm:text-[12px]">
             <span
               aria-hidden="true"
               className="h-1.5 w-1.5 rounded-full"
@@ -72,7 +78,7 @@ function Tile({
             />
             {tile.label}
           </span>
-          <span className="relative mt-0.5 text-[10px] leading-snug text-label-2">
+          <span className="relative mt-1 text-[12px] leading-snug text-label-2 sm:mt-0.5 sm:text-[10px]">
             {tile.meta}
           </span>
 

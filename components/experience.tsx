@@ -8,7 +8,7 @@ import { EXPERIENCES } from "@/lib/experience";
 
 export function ExperienceSection() {
   return (
-    <section id="experience" className="px-4 py-12 sm:px-6 md:py-16" aria-labelledby="experience-heading">
+    <section id="experience" className="px-4 py-8 sm:px-6 sm:py-12 md:py-16" aria-labelledby="experience-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="Experience" subtitle="Where I've worked" accent="#e8710a">
@@ -33,7 +33,7 @@ export function ExperienceSection() {
                     <Pill>{item.type}</Pill>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-label-2">
+                  <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-label-2 sm:text-[13px]">
                     <span className="inline-flex items-center gap-1 tabular-nums">
                       <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                       {item.period}

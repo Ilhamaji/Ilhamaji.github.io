@@ -45,7 +45,7 @@ function TechMark({ name }: { name: string }) {
 
 export function Projects() {
   return (
-    <section id="projects" className="px-4 py-12 sm:px-6 md:py-16" aria-labelledby="projects-heading">
+    <section id="projects" className="px-4 py-8 sm:px-6 sm:py-12 md:py-16" aria-labelledby="projects-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow
@@ -54,7 +54,7 @@ export function Projects() {
             accent="#0066d6"
             bare
           >
-            <div className="p-5 md:p-7">
+            <div className="p-4 sm:p-5 md:p-7">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <SectionHead
                   id="projects-heading"
@@ -80,7 +80,7 @@ export function Projects() {
                     <GlassCard as="article" className="flex h-full flex-col p-5">
                       <div className="flex items-center gap-2">
                         <AccentDot accent={p.accent} />
-                        <span className="text-[13px] font-semibold uppercase tracking-[0.06em] text-label-2">
+                        <span className="text-[14px] font-semibold uppercase tracking-[0.06em] text-label-2 sm:text-[13px]">
                           {p.tag}
                         </span>
                       </div>
@@ -88,9 +88,9 @@ export function Projects() {
                       <h3 className="mt-3 text-[17px] font-semibold leading-snug tracking-[-0.01em] text-label">
                         {p.title}
                       </h3>
-                      <p className="mt-1 text-[13px] text-label-2">{p.subtitle}</p>
+                      <p className="mt-1 text-[14px] text-label-2 sm:text-[13px]">{p.subtitle}</p>
 
-                      <p className="mt-3 flex-1 text-[14px] leading-relaxed text-label-2">
+                      <p className="mt-3 flex-1 text-[15px] leading-relaxed text-label-2 sm:text-[14px]">
                         {p.description}
                       </p>
 
@@ -109,7 +109,7 @@ export function Projects() {
                               href={p.github}
                               target="_blank"
                               rel="noreferrer noopener"
-                              className="inline-flex min-h-[44px] items-center gap-1 text-[14px] text-accent hover:underline"
+                              className="inline-flex min-h-[44px] items-center gap-1 text-[15px] text-accent hover:underline sm:text-[14px]"
                             >
                               Repository
                               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
@@ -120,7 +120,7 @@ export function Projects() {
                               href={p.demo}
                               target="_blank"
                               rel="noreferrer noopener"
-                              className="inline-flex min-h-[44px] items-center gap-1 text-[14px] text-accent hover:underline"
+                              className="inline-flex min-h-[44px] items-center gap-1 text-[15px] text-accent hover:underline sm:text-[14px]"
                             >
                               Live demo
                               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />

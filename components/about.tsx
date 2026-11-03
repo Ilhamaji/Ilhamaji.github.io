@@ -15,7 +15,7 @@ const FACTS = [
 
 export function About() {
   return (
-    <section id="about" className="px-4 py-12 sm:px-6 md:py-16" aria-labelledby="about-heading">
+    <section id="about" className="px-4 py-8 sm:px-6 sm:py-12 md:py-16" aria-labelledby="about-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="About" subtitle="A little context" accent="#0f9d58">
@@ -38,7 +38,7 @@ export function About() {
                       key={f.label}
                       className="rounded-[var(--radius-sm)] bg-surface-2 p-4"
                     >
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-label-2">
+                      <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-label-2 sm:text-[11px]">
                         {f.label}
                       </dt>
                       <dd className="mt-1 text-[15px] text-label">{f.value}</dd>

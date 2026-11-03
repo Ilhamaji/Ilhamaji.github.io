@@ -76,7 +76,7 @@ export function SectionHead({
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {eyebrow && (
-        <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-label-2">
+        <span className="text-[14px] font-semibold uppercase tracking-[0.08em] text-label-2 sm:text-[13px]">
           {eyebrow}
         </span>
       )}

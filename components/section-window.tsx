@@ -53,7 +53,7 @@ export function SectionWindow({
       */}
       <MacWindowChrome title={title} subtitle={subtitle} accent={accent} />
 
-      <div className={bare ? "" : "p-6 md:p-8"}>{children}</div>
+      <div className={bare ? "" : "p-4 sm:p-6 md:p-8"}>{children}</div>
     </div>
   );
 }

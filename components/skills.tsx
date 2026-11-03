@@ -27,7 +27,7 @@ function StackTile({ name }: { name: string }) {
             {name.slice(0, 2)}
           </span>
         )}
-        <span className="max-w-full px-0.5 text-center text-[10px] font-medium leading-tight text-label-2 md:px-1 md:text-[11px]">
+        <span className="max-w-full px-0.5 text-center text-[12px] font-medium leading-tight text-label-2 md:px-1 md:text-[11px]">
           {entry?.label ?? name}
         </span>
       </div>
@@ -37,7 +37,7 @@ function StackTile({ name }: { name: string }) {
 
 export function Skills() {
   return (
-    <section id="skills" className="px-4 py-12 sm:px-6 md:py-16" aria-labelledby="skills-heading">
+    <section id="skills" className="px-4 py-8 sm:px-6 sm:py-12 md:py-16" aria-labelledby="skills-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="Skills" subtitle="Tools I reach for" accent="#7c3aed">

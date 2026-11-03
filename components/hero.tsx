@@ -42,11 +42,13 @@ export function Hero() {
         </p>
 
         {/*
-          On phones the full bio pushed the window below the fold: eight lines
-          of text before anything interactive. Clamped to three lines there and
-          left intact from the tablet breakpoint up, where it has room.
+          Full bio, never truncated.
+
+          A three-line clamp here produced an ellipsis on phones, which read as
+          missing content rather than as a summary. The text is the same on
+          every device now, at a size and measure tuned for a narrow column.
         */}
-        <p className="mt-6 line-clamp-3 max-w-2xl text-[15.5px] leading-relaxed text-label-2 md:line-clamp-none md:text-[16px]">
+        <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-label-2 md:mt-6 md:text-[16px]">
           {BIO}
         </p>
 

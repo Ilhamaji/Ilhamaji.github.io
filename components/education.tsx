@@ -46,7 +46,7 @@ const IconPlate = ({ children }: { children: React.ReactNode }) => (
 
 export function EducationSection() {
   return (
-    <section id="education" className="px-4 py-12 sm:px-6 md:py-16" aria-labelledby="education-heading">
+    <section id="education" className="px-4 py-8 sm:px-6 sm:py-12 md:py-16" aria-labelledby="education-heading">
       <div className="mx-auto max-w-5xl">
         <Reveal>
           <SectionWindow title="Education" subtitle="Academic background" accent="#0b8a9b">
@@ -70,7 +70,7 @@ export function EducationSection() {
                         {item.degree}
                       </h3>
                       <p className="mt-1 text-[15px] text-accent">{item.institution}</p>
-                      <p className="mt-1 inline-flex items-center gap-1 text-[13px] tabular-nums text-label-2">
+                      <p className="mt-1 inline-flex items-center gap-1 text-[14px] tabular-nums text-label-2 sm:text-[13px]">
                         <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                         {item.period} · {item.location}
                       </p>
@@ -96,8 +96,8 @@ export function EducationSection() {
                       <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
                         {c.title}
                       </h3>
-                      <p className="mt-1 text-[13px] text-label-2">{c.issuer}</p>
-                      <p className="mt-1 text-[13px] tabular-nums text-accent">
+                      <p className="mt-1 text-[14px] text-label-2 sm:text-[13px]">{c.issuer}</p>
+                      <p className="mt-1 text-[14px] tabular-nums text-accent sm:text-[13px]">
                         {c.period}
                       </p>
                       <p className="mt-2 text-[15px] leading-relaxed text-label-2">

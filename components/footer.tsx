@@ -20,7 +20,7 @@ export function Footer() {
   return (
     <footer
       id="contact"
-      className="mt-auto px-4 py-12 sm:px-6 md:py-16"
+      className="mt-auto px-4 py-8 sm:px-6 sm:py-12 md:py-16"
       aria-labelledby="contact-heading"
     >
       <div className="mx-auto max-w-5xl">
@@ -73,7 +73,7 @@ export function Footer() {
             </div>
           </div>
 
-          <p className="mt-8 border-t border-separator pt-5 text-[13px] text-label-2">
+          <p className="mt-8 border-t border-separator pt-5 text-[14px] text-label-2 sm:text-[13px]">
             {"\u00A9"} {new Date().getFullYear()} M. Ilham Aji Saputra
           </p>
           </SectionWindow>
