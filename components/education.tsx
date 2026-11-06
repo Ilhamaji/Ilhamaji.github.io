@@ -29,15 +29,11 @@ const EDUCATION = [
 const CERTIFICATIONS = [
   {
     /*
-      Split into two deliberate lines rather than left to wrap.
-
-      The title needs ~417px at 17px; the column has ~340px, and widening the
-      column would shrink the degree cards until their own titles wrapped too.
-      Left alone the browser broke it as "Bangkit Academy Cloud Computing /
-      Cohort Graduate" — one stranded word. Splitting after "Computing" gives
-      two balanced lines of comparable width.
+      One string again. The explicit two-line split existed only because the
+      title sat in a ~340px column; at full width it fits on one line, and a
+      hard newline would now be a stale workaround.
     */
-    title: "Bangkit Academy Cloud Computing\nCohort Graduate",
+    title: "Bangkit Academy Cloud Computing Cohort Graduate",
     issuer: "Led by Google, Tokopedia, Gojek, & Traveloka",
     period: "Sep 2024 – Dec 2024",
     description:
@@ -66,81 +62,84 @@ export function EducationSection() {
             />
 
             {/*
-              Two columns whose cards align row-for-row on lg.
+              One column, like Experience and Projects.
 
-              The previous version stacked each column independently, so the
-              certification card stretched to the full column height (~400px
-              against ~180px of text) while the two degree cards ended at
-              unrelated y-positions. `lg:grid-rows-[auto_auto]` plus a shared
-              `space-y` row rhythm makes the tops line up and lets each card
-              size to its own content instead of to the tallest sibling.
+              Two columns were tried and rejected: the degree column is two
+              cards tall and the certification column is one, so the right side
+              stopped ~200px short of the left no matter how the cards were
+              sized. `h-full` stretched the certification into a mostly-empty
+              box; removing it left a void under a short card. A narrow column
+              also forced the Bangkit title to wrap while the wider degree
+              column's shorter title did not, which is what made the card look
+              wrong rather than merely short.
+
+              At full width both titles sit on one line and the cards close the
+              section cleanly at the bottom.
             */}
-            <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_1fr] lg:items-start">
-          <div className="space-y-4">
-            {EDUCATION.map((item, i) => (
-              <Reveal key={item.degree} delay={i * 0.05}>
-                <GlassCard as="article" className="p-6">
-                  <div className="flex items-start gap-3">
-                    <IconPlate>
-                      <GraduationCap className="h-4 w-4" aria-hidden="true" />
-                    </IconPlate>
-                    <div>
-                      <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
-                        {item.degree}
-                      </h3>
-                      <p className="mt-1 text-[15px] text-accent">{item.institution}</p>
-                      <p className="mt-1 inline-flex items-center gap-1 text-[14px] tabular-nums text-label-2 sm:text-[13px]">
-                        <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                        {item.period} · {item.location}
-                      </p>
-                      <p className="mt-2 text-[15px] leading-relaxed text-label-2">
-                        {item.details}
-                      </p>
+            <div className="mt-6 space-y-4">
+              {EDUCATION.map((item, i) => (
+                <Reveal key={item.degree} delay={i * 0.05}>
+                  <GlassCard as="article" className="p-6">
+                    <div className="flex items-start gap-3">
+                      <IconPlate>
+                        <GraduationCap className="h-4 w-4" aria-hidden="true" />
+                      </IconPlate>
+                      <div className="min-w-0">
+                        <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
+                          {item.degree}
+                        </h3>
+                        <p className="mt-1 text-[15px] text-accent">{item.institution}</p>
+                        <p className="mt-1 inline-flex items-center gap-1 text-[14px] tabular-nums text-label-2 sm:text-[13px]">
+                          <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+                          {item.period} · {item.location}
+                        </p>
+                        <p className="mt-2 text-[15px] leading-relaxed text-label-2">
+                          {item.details}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </GlassCard>
-              </Reveal>
-            ))}
-          </div>
+                  </GlassCard>
+                </Reveal>
+              ))}
+            </div>
 
-          <div className="space-y-4">
-            {CERTIFICATIONS.map((c) => (
-              /*
-                No `h-full`. Stretching to the column height was what produced
-                a card three times taller than its copy, with a dead block of
-                empty surface under the description.
-              */
-              <Reveal key={c.title} delay={0.1}>
-                <GlassCard as="article" className="p-6">
-                  <div className="flex items-start gap-3">
-                    <IconPlate>
-                      <Award className="h-4 w-4" aria-hidden="true" />
-                    </IconPlate>
-                    <div className="min-w-0">
-                      {/*
-                        `whitespace-pre-line` honours the newline baked into the
-                        title above; without it the split collapses back into an
-                        uncontrolled wrap. `text-pretty` balances any residual
-                        wrap on narrow screens.
-                      */}
-                      <h3 className="whitespace-pre-line text-pretty text-[17px] font-semibold leading-snug tracking-[-0.02em] text-label">
-                        {c.title}
-                      </h3>
-                      <p className="mt-1 text-[14px] text-label-2 sm:text-[13px]">{c.issuer}</p>
-                      <p className="mt-1 inline-flex items-center gap-1 text-[14px] tabular-nums text-accent sm:text-[13px]">
-                        <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                        {c.period}
-                      </p>
-                      <p className="mt-2 text-[15px] leading-relaxed text-label-2">
-                        {c.description}
-                      </p>
-                    </div>
-                  </div>
-                </GlassCard>
-              </Reveal>
-            ))}
-          </div>
-        </div>
+            {/*
+              The certification is set apart, not just appended. It is a
+              different kind of thing from a degree and the section is titled
+              "Education", so it gets its own labelled group instead of
+              becoming a third degree card.
+            */}
+            <div className="mt-8">
+              <h3 className="text-[14px] font-semibold uppercase tracking-[0.08em] text-label-3 sm:text-[13px]">
+                Certification
+              </h3>
+              <div className="mt-3 space-y-4">
+                {CERTIFICATIONS.map((c) => (
+                  <Reveal key={c.title} delay={0.1}>
+                    <GlassCard as="article" className="p-6">
+                      <div className="flex items-start gap-3">
+                        <IconPlate>
+                          <Award className="h-4 w-4" aria-hidden="true" />
+                        </IconPlate>
+                        <div className="min-w-0">
+                          <h4 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
+                            {c.title}
+                          </h4>
+                          <p className="mt-1 text-[15px] text-accent">{c.issuer}</p>
+                          <p className="mt-1 inline-flex items-center gap-1 text-[14px] tabular-nums text-label-2 sm:text-[13px]">
+                            <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
+                            {c.period}
+                          </p>
+                          <p className="mt-2 text-[15px] leading-relaxed text-label-2">
+                            {c.description}
+                          </p>
+                        </div>
+                      </div>
+                    </GlassCard>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
           </SectionWindow>
         </Reveal>
       </div>

@@ -409,18 +409,30 @@ describe("education layout", () => {
     expect(code).not.toMatch(/h-full/);
   });
 
-  it("aligns the two columns from the top", () => {
-    // Without `items-start` the shorter column stretches, which is what made
-    // the certification card grow in the first place.
-    expect(src()).toMatch(/lg:items-start/);
+  it("keeps education in a single column", () => {
+    // Two columns were the root of the odd-looking Bangkit card: the degree
+    // column is two cards tall and the certification column is one, so the
+    // right side stopped ~200px short. `h-full` filled that gap with an empty
+    // box; removing it left a void. Neither is right, so the layout is one
+    // column like Experience and Projects.
+    const s = src();
+    const body = s.slice(s.indexOf("EDUCATION.map"));
+    expect(body).not.toMatch(/lg:grid-cols/);
+    expect(body).not.toMatch(/lg:items-start/);
   });
 
-  it("keeps the certification title on a deliberate two-line split", () => {
-    // The title needs ~417px at 17px but the column has ~340px. Left to wrap,
-    // the browser stranded the last two words on their own line.
+  it("separates the certification from the degrees", () => {
+    // It is a different kind of thing and the section is titled "Education",
+    // so it gets its own labelled group rather than posing as a third degree.
+    expect(src()).toMatch(/Certification/);
+  });
+
+  it("lets the certification title fit on one line at full width", () => {
+    // The forced newline only existed to survive a narrow column. Keeping it
+    // now would break the title in two for no reason.
     const s = src();
-    expect(s).toMatch(/Bangkit Academy Cloud Computing\\nCohort Graduate/);
-    expect(s).toMatch(/whitespace-pre-line/);
+    expect(s).not.toMatch(/Cloud Computing\\nCohort/);
+    expect(s).not.toMatch(/whitespace-pre-line/);
   });
 });
 
