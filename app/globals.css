@@ -97,6 +97,49 @@
     border-radius: 4px;
   }
 
+  /*
+    Cursor: pointing only at things that actually respond to a click.
+
+    Tailwind v4's Preflight dropped the `cursor: pointer` that v3 put on
+    <button>, so every hand-rolled button here — the theme toggle, the six
+    hero tiles, the navbar's menu triggers — showed the arrow instead. Links
+    kept theirs because Preflight never reset them, which is why the page
+    looked half-converted rather than uniformly wrong.
+
+    This lives in base, not in seven class strings, because a rule spread over
+    call sites is a rule the next component will not follow. Anything new that
+    is genuinely clickable gets the pointer for free; anything else stays on
+    the arrow, which is the default and therefore needs no rule of its own.
+  */
+  a[href],
+  button,
+  summary,
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  label[for],
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"] {
+    cursor: pointer;
+  }
+
+  /*
+    A disabled control takes no click, so it must not advertise one. This
+    overrides the pointer above by specificity, and stays correct even when a
+    button is only disabled via `aria-disabled`.
+  */
+  button:disabled,
+  [aria-disabled="true"],
+  [role="button"][aria-disabled="true"] {
+    cursor: default;
+  }
+
   /* Headings inherit the body face. Hierarchy comes from size, weight and
      tracking — never from a second display font. */
   h1,

@@ -28,7 +28,16 @@ const EDUCATION = [
 
 const CERTIFICATIONS = [
   {
-    title: "Bangkit Academy Cloud Computing Cohort Graduate",
+    /*
+      Split into two deliberate lines rather than left to wrap.
+
+      The title needs ~417px at 17px; the column has ~340px, and widening the
+      column would shrink the degree cards until their own titles wrapped too.
+      Left alone the browser broke it as "Bangkit Academy Cloud Computing /
+      Cohort Graduate" — one stranded word. Splitting after "Computing" gives
+      two balanced lines of comparable width.
+    */
+    title: "Bangkit Academy Cloud Computing\nCohort Graduate",
     issuer: "Led by Google, Tokopedia, Gojek, & Traveloka",
     period: "Sep 2024 – Dec 2024",
     description:
@@ -56,7 +65,17 @@ export function EducationSection() {
               title="Education"
             />
 
-            <div className="mt-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+            {/*
+              Two columns whose cards align row-for-row on lg.
+
+              The previous version stacked each column independently, so the
+              certification card stretched to the full column height (~400px
+              against ~180px of text) while the two degree cards ended at
+              unrelated y-positions. `lg:grid-rows-[auto_auto]` plus a shared
+              `space-y` row rhythm makes the tops line up and lets each card
+              size to its own content instead of to the tallest sibling.
+            */}
+            <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_1fr] lg:items-start">
           <div className="space-y-4">
             {EDUCATION.map((item, i) => (
               <Reveal key={item.degree} delay={i * 0.05}>
@@ -86,18 +105,30 @@ export function EducationSection() {
 
           <div className="space-y-4">
             {CERTIFICATIONS.map((c) => (
-              <Reveal key={c.title} delay={0.1} className="h-full">
-                <GlassCard as="article" className="h-full p-6">
+              /*
+                No `h-full`. Stretching to the column height was what produced
+                a card three times taller than its copy, with a dead block of
+                empty surface under the description.
+              */
+              <Reveal key={c.title} delay={0.1}>
+                <GlassCard as="article" className="p-6">
                   <div className="flex items-start gap-3">
                     <IconPlate>
                       <Award className="h-4 w-4" aria-hidden="true" />
                     </IconPlate>
-                    <div>
-                      <h3 className="text-[17px] font-semibold leading-tight tracking-[-0.01em] text-label">
+                    <div className="min-w-0">
+                      {/*
+                        `whitespace-pre-line` honours the newline baked into the
+                        title above; without it the split collapses back into an
+                        uncontrolled wrap. `text-pretty` balances any residual
+                        wrap on narrow screens.
+                      */}
+                      <h3 className="whitespace-pre-line text-pretty text-[17px] font-semibold leading-snug tracking-[-0.02em] text-label">
                         {c.title}
                       </h3>
                       <p className="mt-1 text-[14px] text-label-2 sm:text-[13px]">{c.issuer}</p>
-                      <p className="mt-1 text-[14px] tabular-nums text-accent sm:text-[13px]">
+                      <p className="mt-1 inline-flex items-center gap-1 text-[14px] tabular-nums text-accent sm:text-[13px]">
+                        <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                         {c.period}
                       </p>
                       <p className="mt-2 text-[15px] leading-relaxed text-label-2">

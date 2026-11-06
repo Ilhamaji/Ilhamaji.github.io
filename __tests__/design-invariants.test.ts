@@ -393,6 +393,38 @@ describe("page structure", () => {
 });
 
 /* ------------------------------------------------------------------ */
+/* Education layout.                                                   */
+/* ------------------------------------------------------------------ */
+describe("education layout", () => {
+  const src = () => read("components/education.tsx");
+
+  it("lets the certification card size to its content", () => {
+    // `h-full` stretched it to the degree column's height: ~400px of card
+    // around ~180px of copy, with a dead block of empty surface underneath.
+    const s = src();
+    const certBlock = s.slice(s.indexOf("CERTIFICATIONS.map"));
+    // Strip comments first: the note above the card explains the old `h-full`,
+    // and a test that reads prose is not a test.
+    const code = certBlock.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+    expect(code).not.toMatch(/h-full/);
+  });
+
+  it("aligns the two columns from the top", () => {
+    // Without `items-start` the shorter column stretches, which is what made
+    // the certification card grow in the first place.
+    expect(src()).toMatch(/lg:items-start/);
+  });
+
+  it("keeps the certification title on a deliberate two-line split", () => {
+    // The title needs ~417px at 17px but the column has ~340px. Left to wrap,
+    // the browser stranded the last two words on their own line.
+    const s = src();
+    expect(s).toMatch(/Bangkit Academy Cloud Computing\\nCohort Graduate/);
+    expect(s).toMatch(/whitespace-pre-line/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
 /* Tech icons must stay readable on their light tile.                 */
 /* ------------------------------------------------------------------ */
 describe("tech icon legibility", () => {
@@ -412,6 +444,41 @@ describe("tech icon legibility", () => {
   it("skills tiles use the brand color, not a blanket mono color", () => {
     const src = read("components/skills.tsx");
     expect(src).toMatch(/style=\{\{ color: entry\.color \}\}/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Cursor affordance.                                                  */
+/* ------------------------------------------------------------------ */
+describe("cursor affordance", () => {
+  const css = () => read("app/globals.css");
+
+  it("restores the pointer Preflight removes from buttons", () => {
+    // Tailwind v4's Preflight dropped `cursor: pointer` from <button>, so the
+    // theme toggle, the six hero tiles and the navbar triggers all showed the
+    // arrow while every <a> showed a hand — the page read as half-converted.
+    const src = css();
+    const pointerRule = src.slice(src.indexOf("cursor: pointer") - 400);
+    expect(pointerRule).toMatch(/\bbutton\b/);
+    expect(pointerRule).toMatch(/a\[href\]/);
+    expect(pointerRule).toMatch(/\[role="button"\]/);
+  });
+
+  it("leaves everything else on the default arrow", () => {
+    // The rule must be an allowlist of genuinely clickable elements. A blanket
+    // `* { cursor: pointer }`, or a pointer on decorative chrome, would make
+    // the whole page look clickable, which is worse than the original bug.
+    const src = css();
+    expect(src).not.toMatch(/\*\s*\{[^}]*cursor:\s*pointer/);
+    expect(src).not.toMatch(/body\s*\{[^}]*cursor:\s*pointer/);
+    // Window chrome and panels are ornament; they must not advertise a click.
+    expect(read("components/mac-window-chrome.tsx")).not.toMatch(/cursor-pointer/);
+    expect(read("components/section-window.tsx")).not.toMatch(/cursor-pointer/);
+  });
+
+  it("does not advertise a click on a disabled control", () => {
+    const src = css();
+    expect(src).toMatch(/button:disabled[\s\S]{0,120}cursor:\s*default/);
   });
 });
 
