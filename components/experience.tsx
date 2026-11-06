@@ -2,6 +2,7 @@
 
 import { Calendar, MapPin } from "lucide-react";
 import { GlassCard, Pill, SectionHead } from "@/components/glass/ui";
+import { Collapsible } from "@/components/collapsible";
 import { Reveal } from "@/components/reveal";
 import { SectionWindow } from "@/components/section-window";
 import { EXPERIENCES } from "@/lib/experience";
@@ -46,16 +47,31 @@ export function ExperienceSection() {
                     )}
                   </div>
 
-                  <ul className="mt-4 space-y-2">
-                    {item.description.map((line) => (
-                      <li
-                        key={line}
-                        className="relative pl-4 text-[15px] leading-relaxed text-label-2 before:absolute before:left-0 before:top-[9px] before:h-1 before:w-1 before:rounded-full before:bg-accent"
-                      >
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
+                  {/*
+                    The bullets are the bulk of this section — a single card is
+                    ~950px tall at 390px wide. Collapsed behind a toggle on
+                    phones, always open on desktop (see Collapsible).
+                  */}
+                  <Collapsible
+                    moreLabel={
+                      item.description.length > 1
+                        ? `Read description (${item.description.length})`
+                        : "Read description"
+                    }
+                    lessLabel="Hide description"
+                    className="mt-4"
+                  >
+                    <ul className="space-y-2">
+                      {item.description.map((line) => (
+                        <li
+                          key={line}
+                          className="relative pl-4 text-[15px] leading-relaxed text-label-2 before:absolute before:left-0 before:top-[9px] before:h-1 before:w-1 before:rounded-full before:bg-accent"
+                        >
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </Collapsible>
 
                   <ul className="mt-4 flex flex-wrap gap-2">
                     {item.skills.map((s) => (

@@ -393,6 +393,58 @@ describe("page structure", () => {
 });
 
 /* ------------------------------------------------------------------ */
+/* Experience cards collapse on phones.                                */
+/* ------------------------------------------------------------------ */
+describe("experience collapsible", () => {
+  const src = () => read("components/experience.tsx");
+  const comp = () => read("components/collapsible.tsx");
+
+  it("collapses the description behind a toggle", () => {
+    // The section measured ~3200px at 390px wide — nearly four screens — with
+    // a single card at ~950px. Bullets that long are unreadable on a phone.
+    expect(src()).toMatch(/<Collapsible/);
+    expect(src()).toMatch(/Read description/);
+  });
+
+  it("splits collapsed/expanded on CSS, not on a JS width check", () => {
+    // A width check in JS has to guess before hydration; a wrong guess means a
+    // flash of expanded content or a collapsed desktop page. CSS cannot
+    // disagree with itself.
+    const c = comp();
+    // Strip comments: the note explains the rejected approach by name.
+    const code = c.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "");
+    expect(code).not.toMatch(/matchMedia/);
+    expect(code).not.toMatch(/window\.innerWidth/);
+    expect(c).toMatch(/sm:hidden/);
+    expect(c).toMatch(/hidden sm:block/);
+  });
+
+  it("exposes the toggle to assistive tech", () => {
+    const c = comp();
+    expect(c).toMatch(/aria-expanded=\{open\}/);
+    expect(c).toMatch(/aria-controls=\{id\}/);
+    // A decorative control that looks clickable but is not announced is worse
+    // than no control; this one must be a real button.
+    expect(c).toMatch(/<button/);
+    expect(c).toMatch(/type="button"/);
+  });
+
+  it("gives the toggle a touch-sized target", () => {
+    // 44px is the minimum comfortable tap target; anything shorter is a
+    // mis-tap generator on a phone, which is the device this exists for.
+    expect(comp()).toMatch(/min-h-\[44px\]/);
+  });
+
+  it("never hides the description on desktop", () => {
+    // The reveal is conditional only below `sm`; at `sm` and up the region is
+    // always displayed regardless of state.
+    const c = comp();
+    const region = c.slice(c.indexOf("id={id}"), c.indexOf("</div>"));
+    expect(region).toMatch(/hidden sm:block/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
 /* Education layout.                                                   */
 /* ------------------------------------------------------------------ */
 describe("education layout", () => {
