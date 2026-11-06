@@ -3,6 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { GlassButton, Pill } from "@/components/glass/ui";
 import { HeroWindow } from "@/components/hero-window";
+import { isPlainClick, scrollToSection } from "@/lib/scroll";
 
 /* Verbatim from the previous hero — no claim added, none removed. */
 const BIO =
@@ -53,11 +54,28 @@ export function Hero() {
         </p>
 
         <div className="mt-8 flex flex-wrap items-center gap-3 md:mt-10">
-          <GlassButton href="#projects" variant="primary">
+          {/*
+            `href` is kept for the reasons in lib/scroll.ts: it is what makes
+            middle-click and the status-bar preview work. The click handler
+            only suppresses the default `#projects` push, so the URL stays `/`.
+          */}
+          <GlassButton
+            href="#projects"
+            variant="primary"
+            onClick={(e) => {
+              if (isPlainClick(e) && scrollToSection("projects")) e.preventDefault();
+            }}
+          >
             View projects
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </GlassButton>
-          <GlassButton href="#contact" variant="secondary">
+          <GlassButton
+            href="#contact"
+            variant="secondary"
+            onClick={(e) => {
+              if (isPlainClick(e) && scrollToSection("contact")) e.preventDefault();
+            }}
+          >
             Get in touch
             <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </GlassButton>

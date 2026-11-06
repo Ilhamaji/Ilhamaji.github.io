@@ -143,62 +143,64 @@ export function HeroWindow() {
               transformStyle: "preserve-3d",
             }}
             className={cn(
+              // Same theme as every section panel. These two are the reference
+              // for each other: `SectionWindow` and this frame must read as one
+              // object, because the hero window *becomes* a section panel during
+              // the transition. A translucent frame against an opaque panel made
+              // the handover look like two different windows swapping places.
               "relative mx-auto w-full max-w-5xl overflow-hidden",
-              "rounded-[16px] border border-separator bg-surface/75 backdrop-blur-xl",
+              "rounded-[16px] border border-separator bg-bg",
               "shadow-[0_30px_90px_-24px_rgb(0_0_0/0.45)]",
               "transition-transform duration-300 ease-out will-change-transform"
             )}
           >
-          {/* window chrome */}
-          <div className="flex items-center gap-3 border-b border-separator px-4 py-2.5">
-            <div aria-hidden="true" className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-              <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-            </div>
-            <div className="mx-auto hidden items-center gap-1.5 rounded-md bg-surface-2 px-3 py-1 text-[11px] text-label-2 sm:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              ilhamaji.github.io
-            </div>
-          </div>
+            {/*
+              The shared chrome, not a hand-rolled bar. The section panels use
+              `MacWindowChrome`, so drawing a second, slightly different title
+              bar here guaranteed drift — the traffic lights were already a
+              different size (10px vs 12px) and the address pill was a different
+              material. One component, one title bar, no drift.
+            */}
+            <MacWindowChrome title="ilhmsap.my.id" subtitle="Portfolio" />
 
-          <div className="grid grid-cols-[132px_1fr] max-sm:grid-cols-1">
-            {/* sidebar */}
-            <aside className="hidden flex-col gap-1 border-r border-separator p-3 text-[12px] max-sm:hidden sm:flex">
-              <span className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-label-3">
-                Workspace
-              </span>
-              {HERO_TILES.map((t) => (
-                <span
-                  key={t.target}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-label-2"
-                >
+            {/* Sidebar + main. */}
+            <div className="grid grid-cols-[132px_1fr] max-sm:grid-cols-1">
+              {/* sidebar */}
+              <aside className="hidden flex-col gap-1 border-r border-separator p-3 text-[12px] max-sm:hidden sm:flex">
+                <span className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-label-3">
+                  Workspace
+                </span>
+                {HERO_TILES.map((t) => (
                   <span
-                    aria-hidden="true"
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{ background: t.accent }}
-                  />
-                  {t.label}
-                </span>
-              ))}
-            </aside>
-
-            {/* main */}
-            <div className="p-4 sm:p-5">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[13px] font-semibold text-label">All sections</span>
-                <span className="hidden text-[11px] text-label-3 sm:inline">
-                  Click a card to jump
-                </span>
-              </div>
-
-              <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                {HERO_TILES.map((t, i) => (
-                  <Tile key={t.target} tile={t} index={i} onActivate={zoomTo} />
+                    key={t.target}
+                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-label-2"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ background: t.accent }}
+                    />
+                    {t.label}
+                  </span>
                 ))}
-              </ul>
+              </aside>
+
+              {/* main — same inner rhythm as the section panels */}
+              <div className="p-4 sm:p-6 md:p-8">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-[13px] font-semibold text-label">All sections</span>
+                  <span className="hidden text-[11px] text-label-3 sm:inline">
+                    Click a card to jump
+                  </span>
+                </div>
+
+                <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  {HERO_TILES.map((t, i) => (
+                    <Tile key={t.target} tile={t} index={i} onActivate={zoomTo} />
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
           </div>
         </Reveal>
       </div>

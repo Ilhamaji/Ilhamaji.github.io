@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { GlassButton } from "@/components/glass/ui";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { isPlainClick, scrollToSection } from "@/lib/scroll";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -93,33 +94,13 @@ export function Navbar() {
    *
    * The anchors stay real elements with real hrefs so middle-click, "open in
    * new tab" and the accessible name all keep working; only plain left clicks
-   * are intercepted.
+   * are intercepted. The same rule applies to the buttons outside this bar
+   * (see lib/scroll.ts), so in-page navigation behaves identically wherever
+   * it starts.
    */
   const goTo = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (
-      e.defaultPrevented ||
-      e.button !== 0 ||
-      e.metaKey ||
-      e.ctrlKey ||
-      e.shiftKey ||
-      e.altKey
-    ) {
-      return;
-    }
-
-    const target = document.getElementById(id);
-    if (!target) return;
-
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // "auto" still resolves to the stylesheet's scroll-behavior: smooth, so it
-    // is not an escape hatch. A background tab (or a browser that is not
-    // compositing) then silently never moves. "instant" is honoured there, so
-    // use it whenever the motion itself cannot be relied on.
-    const behavior: ScrollBehavior =
-      reduce || !document.hasFocus() ? "instant" : "smooth";
-
-    target.scrollIntoView({ behavior, block: "start" });
+    if (!isPlainClick(e)) return;
+    if (!scrollToSection(id)) return;
 
     e.preventDefault();
     setActive(id);

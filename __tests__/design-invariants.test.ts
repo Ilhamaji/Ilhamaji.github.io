@@ -447,8 +447,13 @@ describe("navbar active indicator", () => {
   });
 
   it("does not leak a hash into the URL on click", () => {
+    // The scroll itself now lives in lib/scroll.ts so the hero and about
+    // buttons behave identically; the navbar must still go through it and
+    // still cancel the default `#id` push.
     expect(src()).toMatch(/preventDefault/);
-    expect(src()).toMatch(/scrollIntoView/);
+    expect(src()).toMatch(/isPlainClick/);
+    expect(src()).toMatch(/scrollToSection/);
+    expect(read("lib/scroll.ts")).toMatch(/scrollIntoView/);
   });
 
   it("renders the mobile sheet outside the blurred header", () => {
@@ -554,8 +559,10 @@ describe("hero window", () => {
     expect(src).toMatch(/zooming\.end\.top/);
     expect(src).toMatch(/zooming\.end\.width/);
     expect(src).not.toMatch(/scale: zooming\.scale/);
-    // The frame carries the same chrome as the real windows.
-    expect(src).toMatch(/bg-\[#ff5f57\]/);
+    // The frame carries the same chrome as the real windows — via the shared
+    // component, so the traffic lights are defined in exactly one place.
+    expect(src).toMatch(/<MacWindowChrome/);
+    expect(read("components/mac-window-chrome.tsx")).toMatch(/bg-\[#ff5f57\]/);
   });
 
   it("lands on the destination panel, not on a viewport-sized frame", () => {
@@ -708,6 +715,73 @@ describe("section windows", () => {
     // only. A coloured bar across the top was what made the panel and the
     // window look like different objects at the handover.
     expect(read("components/section-window.tsx")).not.toMatch(/h-\[3px\]/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* In-page navigation.                                                */
+/* ------------------------------------------------------------------ */
+describe("in-page navigation", () => {
+  const buttons = () => [
+    read("components/hero.tsx"),
+    read("components/about.tsx"),
+  ].join("\n");
+
+  it("never lets a plain click write `#id` into the address bar", () => {
+    // Clicking "View projects" used to append `#projects`, so the site
+    // advertised `/#projects` — a URL visitors copied and shared, landing them
+    // mid-page. Every in-page anchor outside the navbar must go through the
+    // shared helper, which is the only place that calls preventDefault.
+    const helper = read("lib/scroll.ts");
+    expect(helper).toMatch(/export function isPlainClick/);
+    expect(helper).toMatch(/export function scrollToSection/);
+
+    for (const file of ["components/hero.tsx", "components/about.tsx"]) {
+      const src = read(file);
+      // Any anchor that points at an on-page id must be guarded.
+      const hashed = [...src.matchAll(/href="#([a-z-]+)"/g)].map((m) => m[1]);
+      for (const id of hashed) {
+        expect(
+          src,
+          `${file}: href="#${id}" must call scrollToSection so the URL stays clean`
+        ).toContain(`scrollToSection("${id}")`);
+      }
+    }
+  });
+
+  it("keeps the real href so middle-click still opens the section", () => {
+    // The guard is on the click, not on the anchor: removing href would break
+    // ctrl-click, the status-bar preview and the accessible name.
+    expect(buttons()).toMatch(/href="#projects"/);
+    expect(read("lib/scroll.ts")).toMatch(/e\.metaKey/);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Hero window shares the section theme.                              */
+/* ------------------------------------------------------------------ */
+describe("hero window theming", () => {
+  it("draws the shared chrome instead of its own title bar", () => {
+    // The hero window and the section panels must look like the same object,
+    // because the window literally becomes a panel at the end of the
+    // transition. A hand-rolled bar drifted: 10px traffic lights vs 12px.
+    const src = read("components/hero-window.tsx");
+    const frame = src.slice(0, src.indexOf("The transition layer"));
+    expect(frame).toMatch(/<MacWindowChrome/);
+    expect(frame).not.toMatch(/bg-\[#ff5f57\]/);
+  });
+
+  it("uses the same opaque surface as a section panel", () => {
+    const src = read("components/hero-window.tsx");
+    const frame = src.slice(0, src.indexOf("The transition layer"));
+    expect(frame).toMatch(/rounded-\[16px\] border border-separator bg-bg/);
+    // A translucent frame against an opaque panel read as two different
+    // windows swapping places during the handover. Asserted on the className
+    // block only, so prose about the old value cannot satisfy it.
+    const classNames = [...frame.matchAll(/className=\{?["`]([^"`]*)["`]/g)]
+      .map((m) => m[1])
+      .join(" ");
+    expect(classNames).not.toMatch(/bg-surface\/\d/);
   });
 });
 

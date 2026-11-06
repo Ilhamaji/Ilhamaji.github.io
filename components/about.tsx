@@ -4,6 +4,7 @@ import { ArrowUpRight, Download } from "lucide-react";
 import { GlassButton, SectionHead } from "@/components/glass/ui";
 import { Reveal } from "@/components/reveal";
 import { SectionWindow } from "@/components/section-window";
+import { isPlainClick, scrollToSection } from "@/lib/scroll";
 
 const BIO =
   "Full-Stack Web Developer & NLP Engineer with expertise in building scalable web applications, AI module integration (Groq Llama 3.3, PyMuPDF, Prompt Engineering), and cloud deployments (GCP, Firebase). Skilled in Next.js, Laravel, Node.js, Python, and secure RESTful APIs.";
@@ -57,7 +58,13 @@ export function About() {
                   <Download className="h-4 w-4" aria-hidden="true" />
                   Download CV
                 </GlassButton>
-                <GlassButton href="#experience" variant="secondary">
+                <GlassButton
+                  href="#experience"
+                  variant="secondary"
+                  onClick={(e) => {
+                    if (isPlainClick(e) && scrollToSection("experience")) e.preventDefault();
+                  }}
+                >
                   More about my work
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </GlassButton>
