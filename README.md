@@ -1,68 +1,96 @@
-# Ilhamaji.github.io
+<div align="center">
 
-Personal portfolio of M. Ilham Aji Saputra — Full-Stack Web Developer & NLP
-Engineer. Built with Next.js (App Router) and Tailwind CSS v4, exported as a
-static site and deployed to GitHub Pages.
+# Ilhamaji.dev — Personal Portfolio
+
+Portfolio & blog pribadi **M. Ilham Aji Saputra** — Full-Stack Web Developer & NLP Engineer.
+
+[![Status](https://img.shields.io/badge/status-live-brightgreen?style=flat-square)](#)
+[![Next.js](https://img.shields.io/badge/Next.js-App%20Router-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Tailwind](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+
+**[🌐 ilhamaji.github.io](https://ilhamaji.github.io)**
+
+</div>
+
+---
+
+## Tentang
+
+Website portfolio pribadi yang dibangun dengan **Next.js (App Router)** dan **Tailwind CSS v4**, di-export sebagai static site dan dideploy ke **GitHub Pages**. Desainnya memakai sistem visual **iOS 26 "Liquid Glass"** — tema terang dan gelap yang dikendalikan CSS variables di bawah atribut `[data-theme]`.
+
+Project ini juga menjadi tempat menguji praktik engineering: design system berbasis invariant, test suite untuk aksesibilitas, dan pipeline deploy otomatis.
 
 ## Requirements
 
-- Node.js **22.12+** (vitest 5 requires it; see `.github/workflows/deploy.yml`)
-- npm — this repo uses npm only. `package-lock.json` is the single source of
-  truth for dependency resolution.
+- **Node.js 22.12+** — dibutuhkan oleh Vitest 5 (lihat `.github/workflows/deploy.yml`)
+- **npm saja** — `package-lock.json` adalah satu-satunya sumber kebenaran resolusi dependency
 
-## Getting started
+## Menjalankan
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Buka [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | What it does |
+| Command | Kegunaan |
 | --- | --- |
 | `npm run dev` | Development server |
-| `npm run build` | Static export to `out/` |
-| `npm test` | Vitest suite (design invariants, content integrity, a11y) |
+| `npm run build` | Static export ke `out/` |
+| `npm test` | Vitest suite (design invariant, integritas konten, a11y) |
 | `npm run lint` | ESLint |
 
-## Design system
+## Design System
 
-The UI is an iOS 26 "Liquid Glass" system: light and dark themes driven by CSS
-variables under `[data-theme]`, a translucent glass material, the system font
-stack, and a system-blue accent.
+| Aspek | Pendekatan |
+| --- | --- |
+| Tema | Light & dark via CSS variables pada `[data-theme]` |
+| Estetika | iOS 26 "Liquid Glass" — blur, translucency, dan lapisan halus |
+| Tipografi | Skala modular dengan kontras yang diuji |
+| Aksesibilitas | Diuji otomatis lewat Vitest |
 
-- Tokens live in `app/globals.css`. Components never use `dark:` variants —
-  one set of classes, variables do the switching.
-- Surface primitives (`GlassCard`, `GlassButton`, `SectionHead`, `Pill`) live in
-  `components/glass/ui.tsx`; it is the only place the material is composed.
-- The theme is applied before first paint by `components/theme-script.tsx` so a
-  dark-OS visitor never sees a white flash.
+## Struktur
 
-### Contrast
+```
+app/            # App Router: halaman, layout, metadata
+components/     # komponen UI yang dapat dipakai ulang
+lib/            # utilitas & helper
+__tests__/      # Vitest: design invariants, content integrity, a11y
+docs/           # catatan desain & keputusan teknis
+public/         # aset statis
+.github/        # workflow deploy ke GitHub Pages
+```
 
-Apple's stock values do not meet WCAG AA as normal-weight text, so the accent is
-split into two tokens: `--accent` for text and `--accent-fill` for button
-surfaces. Every foreground/background pair in both themes is asserted with
-computed ratios in `__tests__/design-invariants.test.ts` — not eyeballed.
+## Testing
 
-## Deployment
+Test suite memverifikasi tiga hal yang mudah rusak diam-diam:
 
-Pushes to `master` run `.github/workflows/deploy.yml`: install, test, build,
-and publish `out/` to GitHub Pages.
+1. **Design invariants** — token warna/spacing tidak boleh melenceng dari sistem.
+2. **Content integrity** — data pengalaman, project, dan skill tetap lengkap.
+3. **Aksesibilitas** — kontras warna dan label ARIA.
 
-**Pages must stay in "GitHub Actions" mode.** The repo once went 404 because
-Pages was switched to "Deploy from a branch" (`master`, `/`): that serves the
-repo root, which has no `index.html`, so every path 404s while `/package.json`
-still resolves. If the site 404s again, check
-`Settings → Pages → Build and deployment → Source` first. `_config.yml` was
-removed because it existed only to make that branch-based build work.
+```bash
+npm test
+```
 
-## Notes
+## Deploy
 
-- There is intentionally **no preloader**. A previous one deadlocked on screen;
-  `__tests__/preloader-regression.test.ts` guards against it returning.
-- `next dev` regenerates `AGENTS.md`; that block is committed on purpose so the
-  working tree stays clean.
+Push ke branch utama akan memicu workflow GitHub Actions yang menjalankan build dan mempublikasikan `out/` ke GitHub Pages. Tidak ada server yang dibutuhkan — semuanya static.
+
+## Dokumentasi Internal
+
+Catatan arsitektur dan keputusan desain tersedia di `docs/`, serta `AGENTS.md` / `CLAUDE.md` untuk konteks AI agent.
+
+## Lisensi
+
+MIT.
+
+---
+
+<div align="center">
+Dibuat oleh <a href="https://github.com/Ilhamaji">Ilham Aji</a>
+</div>
