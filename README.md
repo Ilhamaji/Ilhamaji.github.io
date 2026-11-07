@@ -2,7 +2,7 @@
 
 # Personal Portfolio — Ilhamaji
 
-Portfolio & blog pribadi **M. Ilham Aji Saputra** — Full-Stack Web Developer & NLP Engineer.
+The personal portfolio and blog of **M. Ilham Aji Saputra** — Full-Stack Web Developer & NLP Engineer.
 
 [![Status](https://img.shields.io/badge/status-live-brightgreen?style=flat-square)](#)
 [![Next.js](https://img.shields.io/badge/Next.js-App%20Router-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org)
@@ -11,86 +11,88 @@ Portfolio & blog pribadi **M. Ilham Aji Saputra** — Full-Stack Web Developer &
 
 **[🌐 ilhamaji.github.io](https://ilhamaji.github.io)**
 
+**English** · [Bahasa Indonesia](README.id.md)
+
 </div>
 
 ---
 
-## Tentang
+## About
 
-Website portfolio pribadi yang dibangun dengan **Next.js (App Router)** dan **Tailwind CSS v4**, di-export sebagai static site dan dideploy ke **GitHub Pages**. Desainnya memakai sistem visual **iOS 26 "Liquid Glass"** — tema terang dan gelap yang dikendalikan CSS variables di bawah atribut `[data-theme]`.
+A personal site built with **Next.js (App Router)** and **Tailwind CSS v4**, exported as a static site and deployed to **GitHub Pages**. The visual system is **iOS 26 "Liquid Glass"** — light and dark themes driven by CSS variables under the `[data-theme]` attribute.
 
-Project ini juga menjadi tempat menguji praktik engineering: design system berbasis invariant, test suite untuk aksesibilitas, dan pipeline deploy otomatis.
+The project also doubles as a place to test engineering practices: an invariant-based design system, a test suite covering accessibility, and an automated deploy pipeline.
 
 ## Requirements
 
-- **Node.js 22.12+** — dibutuhkan oleh Vitest 5 (lihat `.github/workflows/deploy.yml`)
-- **npm saja** — `package-lock.json` adalah satu-satunya sumber kebenaran resolusi dependency
+- **Node.js 22.12+** — required by Vitest 5 (see `.github/workflows/deploy.yml`)
+- **npm only** — `package-lock.json` is the single source of truth for dependency resolution
 
-## Menjalankan
+## Running It
 
 ```bash
 npm install
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Kegunaan |
+| Command | Purpose |
 | --- | --- |
 | `npm run dev` | Development server |
-| `npm run build` | Static export ke `out/` |
-| `npm test` | Vitest suite (design invariant, integritas konten, a11y) |
+| `npm run build` | Static export to `out/` |
+| `npm test` | Vitest suite (design invariants, content integrity, a11y) |
 | `npm run lint` | ESLint |
 
 ## Design System
 
-| Aspek | Pendekatan |
+| Aspect | Approach |
 | --- | --- |
-| Tema | Light & dark via CSS variables pada `[data-theme]` |
-| Estetika | iOS 26 "Liquid Glass" — blur, translucency, dan lapisan halus |
-| Tipografi | Skala modular dengan kontras yang diuji |
-| Aksesibilitas | Diuji otomatis lewat Vitest |
+| Theme | Light and dark via CSS variables on `[data-theme]` |
+| Aesthetic | iOS 26 "Liquid Glass" — blur, translucency, layered surfaces |
+| Typography | Modular scale with tested contrast |
+| Accessibility | Verified automatically through Vitest |
 
-## Struktur
+## Project Layout
 
 ```
-app/            # App Router: halaman, layout, metadata
-components/     # komponen UI yang dapat dipakai ulang
-lib/            # utilitas & helper
+app/            # App Router: pages, layout, metadata
+components/     # reusable UI components
+lib/            # utilities and helpers
 __tests__/      # Vitest: design invariants, content integrity, a11y
-docs/           # catatan desain & keputusan teknis
-public/         # aset statis
-.github/        # workflow deploy ke GitHub Pages
+docs/           # design notes and technical decisions
+public/         # static assets
+.github/        # GitHub Pages deploy workflow
 ```
 
 ## Testing
 
-Test suite memverifikasi tiga hal yang mudah rusak diam-diam:
+The suite checks three things that break silently:
 
-1. **Design invariants** — token warna/spacing tidak boleh melenceng dari sistem.
-2. **Content integrity** — data pengalaman, project, dan skill tetap lengkap.
-3. **Aksesibilitas** — kontras warna dan label ARIA.
+1. **Design invariants** — colour and spacing tokens must not drift from the system.
+2. **Content integrity** — experience, project, and skill data stay complete.
+3. **Accessibility** — colour contrast and ARIA labels.
 
 ```bash
 npm test
 ```
 
-## Deploy
+## Deployment
 
-Push ke branch utama akan memicu workflow GitHub Actions yang menjalankan build dan mempublikasikan `out/` ke GitHub Pages. Tidak ada server yang dibutuhkan — semuanya static.
+Pushing to the main branch triggers a GitHub Actions workflow that builds the site and publishes `out/` to GitHub Pages. No server is involved — everything is static.
 
-## Dokumentasi Internal
+## Internal Docs
 
-Catatan arsitektur dan keputusan desain tersedia di `docs/`, serta `AGENTS.md` / `CLAUDE.md` untuk konteks AI agent.
+Architecture notes and design decisions live in `docs/`, alongside `AGENTS.md` / `CLAUDE.md` for AI-agent context.
 
-## Lisensi
+## License
 
 MIT.
 
 ---
 
 <div align="center">
-Dibuat oleh <a href="https://github.com/Ilhamaji">Ilham Aji</a>
+Built by <a href="https://github.com/Ilhamaji">Ilham Aji</a>
 </div>
