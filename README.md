@@ -1,6 +1,6 @@
 <div align="center">
 
-# Ilhamaji.dev — Personal Portfolio
+# Personal Portfolio — Ilhamaji
 
 Portfolio & blog pribadi **M. Ilham Aji Saputra** — Full-Stack Web Developer & NLP Engineer.
 
